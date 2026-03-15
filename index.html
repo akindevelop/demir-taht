@@ -749,7 +749,7 @@ body {
 }
 
 /* ========== SOSYAL MEDYA ========== */
-#social-bar {
+#social-bar-old {
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -758,7 +758,7 @@ body {
   gap: 10px;
   z-index: 10;
 }
-.social-btn {
+.social-btn-old {
   width: 38px; height: 38px;
   border-radius: 50%;
   border: 1px solid rgba(200,168,75,0.35);
@@ -770,7 +770,7 @@ body {
   transition: all 0.25s;
   backdrop-filter: blur(4px);
 }
-.social-btn:hover {
+.social-btn-old:hover {
   border-color: var(--gold);
   color: var(--gold-bright);
   background: rgba(200,168,75,0.12);
@@ -780,8 +780,8 @@ body {
 /* Pop-up kart */
 .social-popup {
   position: fixed;
-  bottom: 80px;
-  left: 20px;
+  bottom: 20px;
+  left: 66px;
   width: 240px;
   background: rgba(13,6,4,0.97);
   border: 1px solid rgba(200,168,75,0.4);
@@ -907,6 +907,198 @@ body {
   pointer-events: none;
   text-anchor: middle;
 }
+
+/* ========== GELİŞTİRİCİ PANELLER ========== */
+.dev-panel {
+  position: fixed;
+  z-index: 600;
+  background: rgba(8,4,2,0.97);
+  border: 1px solid rgba(200,168,75,0.35);
+  color: var(--parchment);
+  backdrop-filter: blur(8px);
+  animation: popIn 0.2s ease;
+  display: none;
+}
+.dev-panel.open { display: flex; flex-direction: column; }
+
+#panel-devnotes {
+  top: 20px; left: 66px;
+  width: 320px; max-height: 460px;
+}
+#panel-duyuru {
+  top: 20px; left: 66px;
+  width: 320px; max-height: 460px;
+}
+#panel-silsile {
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, 92vw);
+  max-height: 80vh;
+  position: fixed;
+}
+
+.dev-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid rgba(200,168,75,0.2);
+  flex-shrink: 0;
+}
+.dev-panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.dev-panel-close {
+  background: none; border: none;
+  color: rgba(200,168,75,0.4);
+  font-size: 16px; cursor: pointer;
+  transition: color 0.2s;
+}
+.dev-panel-close:hover { color: var(--gold); }
+.dev-panel-body {
+  overflow-y: auto;
+  padding: 14px 16px;
+  flex: 1;
+}
+
+/* Versiyon geçmişi */
+.version-block { margin-bottom: 18px; }
+.version-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.version-tag::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: rgba(200,168,75,0.2);
+}
+.version-item {
+  font-size: 13px;
+  color: rgba(200,168,75,0.65);
+  line-height: 1.7;
+  padding-left: 12px;
+  border-left: 2px solid rgba(200,168,75,0.15);
+  margin-bottom: 4px;
+}
+.version-item::before { content: '+ '; color: rgba(200,168,75,0.4); }
+
+/* Duyuru */
+.duyuru-item {
+  padding: 12px;
+  border: 1px solid rgba(200,168,75,0.15);
+  margin-bottom: 10px;
+  background: rgba(200,168,75,0.03);
+}
+.duyuru-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+.duyuru-badge.yeni { background: rgba(74,164,80,0.2); color: #4ade80; border: 1px solid rgba(74,164,80,0.3); }
+.duyuru-badge.yakin { background: rgba(250,204,21,0.15); color: #facc15; border: 1px solid rgba(250,204,21,0.3); }
+.duyuru-badge.bilgi { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+.duyuru-baslik {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.duyuru-metin {
+  font-size: 12px;
+  color: rgba(200,168,75,0.6);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Silsile */
+.silsile-overlay-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 599;
+  display: none;
+}
+.silsile-overlay-bg.open { display: block; }
+
+.silsile-item {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+}
+.silsile-item:last-child { border-bottom: none; }
+.silsile-nesil {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: rgba(200,168,75,0.4);
+  padding-top: 2px;
+  text-align: center;
+}
+.silsile-isim {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 3px;
+}
+.silsile-detay {
+  font-size: 12px;
+  color: rgba(200,168,75,0.5);
+  font-style: italic;
+  line-height: 1.5;
+}
+.silsile-skor {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: rgba(200,168,75,0.7);
+  white-space: nowrap;
+}
+.silsile-bos {
+  text-align: center;
+  color: rgba(200,168,75,0.3);
+  font-style: italic;
+  font-size: 13px;
+  padding: 30px 0;
+}
+
+/* Sol alt butonlar */
+.left-btn-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: fixed;
+  top: 20px; left: 20px;
+  z-index: 10;
+}
+.left-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,168,75,0.5);
+  background: rgba(13,6,4,0.9);
+  color: #c8a84b;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s;
+  backdrop-filter: blur(4px);
+  filter: none;
+}
+.left-btn:hover {
+  border-color: #e8c86a;
+  color: #e8c86a;
+  background: rgba(200,168,75,0.15);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(200,168,75,0.2);
+}
 </style>
 </head>
 <body>
@@ -935,17 +1127,136 @@ body {
     </button>
   </div>
   
-<!-- Sosyal Medya Barı -->
-<div id="social-bar">
-  <button class="social-btn" onclick="togglePopup('popup-twitter')" title="Twitter / X">𝕏</button>
-  <button class="social-btn" onclick="togglePopup('popup-instagram')" title="Instagram">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<!-- Sol Üst — Geliştirici Butonları -->
+<div id="dev-btn-bar" style="position:fixed;top:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:10">
+  <button class="left-btn" onclick="toggleDevPanel('devnotes')" title="Geliştirici Notları" style="font-size:13px">✦</button>
+  <button class="left-btn" onclick="toggleDevPanel('duyuru')" title="Duyurular" style="font-size:13px">◈</button>
+</div>
+
+<!-- Sol Alt — Sosyal Medya Butonları -->
+<div id="social-btn-bar" style="position:fixed;bottom:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:10">
+  <button class="left-btn" onclick="togglePopup('popup-twitter')" title="Twitter / X">𝕏</button>
+  <button class="left-btn" onclick="togglePopup('popup-instagram')" title="Instagram">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
       <circle cx="12" cy="12" r="4"/>
       <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
     </svg>
   </button>
-  <button class="social-btn" onclick="togglePopup('popup-mail')" title="E-posta">✉</button>
+  <button class="left-btn" onclick="togglePopup('popup-mail')" title="E-posta">✉</button>
+</div>
+
+
+<!-- ==================== GELİŞTİRİCİ PANELLERİ ==================== -->
+
+<!-- Silsile arka plan -->
+<div class="silsile-overlay-bg" id="silsile-bg" onclick="closeSilsile()"></div>
+
+<!-- Geliştirici Notları -->
+<div class="dev-panel" id="panel-devnotes">
+  <div class="dev-panel-header">
+    <span class="dev-panel-title">📋 GELİŞTİRİCİ NOTLARI</span>
+    <button class="dev-panel-close" onclick="toggleDevPanel('devnotes')">✕</button>
+  </div>
+  <div class="dev-panel-body">
+
+    <div class="version-block">
+      <div class="version-tag">v1.0 — Temel Yapı</div>
+      <div class="version-item">5 stat sistemi (Hazine, Halk, Ordu, Kilise, Soylu)</div>
+      <div class="version-item">Ana menü ve oyun ekranı tasarımı</div>
+      <div class="version-item">7 temel olay</div>
+      <div class="version-item">Web Audio ile tıklama sesi</div>
+      <div class="version-item">localStorage kayıt/yükle</div>
+    </div>
+
+    <div class="version-block">
+      <div class="version-tag">v2.0 — Derinlik</div>
+      <div class="version-item">Mega proje sistemi (15-20 yıllık inşaatlar)</div>
+      <div class="version-item">Envanter ve pasif buff sistemi</div>
+      <div class="version-item">Olasılık bazlı kararlar (%50-%70 şans)</div>
+      <div class="version-item">Veraset ve nesil geçişi</div>
+      <div class="version-item">Dinamik çocuk / veliaht sistemi</div>
+    </div>
+
+    <div class="version-block">
+      <div class="version-tag">v3.0 — Giriş & Atmosfer</div>
+      <div class="version-item">Sinematik giriş ekranı (Oyna, Ayarlar, Hakkında, Bağış)</div>
+      <div class="version-item">Zorluk seçimi (Kolay → Vahşi)</div>
+      <div class="version-item">Hükümdar kişilik sistemi (6 farklı trait)</div>
+      <div class="version-item">Procedural Web Audio müzik</div>
+      <div class="version-item">Stat barlarında tehlike animasyonu</div>
+      <div class="version-item">Zincirli olay sistemi (chain events)</div>
+    </div>
+
+    <div class="version-block">
+      <div class="version-tag">v4.0 — Büyük Güncelleme</div>
+      <div class="version-item">54 → 97 olaya çıkış (yeni kategoriler)</div>
+      <div class="version-item">Komşu krallıklar sistemi (3 komşu, ilişki puanı)</div>
+      <div class="version-item">Komşu olay havuzları (saldırı, ittifak, ticaret)</div>
+      <div class="version-item">Puan ve unvan sistemi (8 kademe)</div>
+      <div class="version-item">Oyun sonu ekranı (skor breakdown, epitaph)</div>
+      <div class="version-item">Hanedan tarihi logu</div>
+      <div class="version-item">Sosyal medya linkleri</div>
+    </div>
+
+    <div class="version-block">
+      <div class="version-tag">v5.0 — Mevcut Sürüm</div>
+      <div class="version-item">97 → 130 olaya çıkış</div>
+      <div class="version-item">3 görsel tema (Ortaçağ, Osmanlı, Bizans)</div>
+      <div class="version-item">Osmanlı olay paketi (Divan, Yeniçeri, Devşirme...)</div>
+      <div class="version-item">Bizans olay paketi (Tagmata, Hipodrom, Patrik...)</div>
+      <div class="version-item">Genel ortaçağ paketi (Matbaa, Kadın hakları...)</div>
+      <div class="version-item">Hanedan silsilesi sayfası</div>
+      <div class="version-item">Geliştirici notları ve duyuru paneli</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Duyuru Paneli -->
+<div class="dev-panel" id="panel-duyuru">
+  <div class="dev-panel-header">
+    <span class="dev-panel-title">📣 DUYURULAR</span>
+    <button class="dev-panel-close" onclick="toggleDevPanel('duyuru')">✕</button>
+  </div>
+  <div class="dev-panel-body">
+
+    <div class="duyuru-item">
+      <div class="duyuru-badge yeni">🟢 YENİ</div>
+      <div class="duyuru-baslik">v5.0 Yayında!</div>
+      <div class="duyuru-metin">Osmanlı ve Bizans temaları, 130+ olay, hanedan silsilesi ve geliştirici notları ile büyük güncelleme yayına girdi.</div>
+    </div>
+
+    <div class="duyuru-item">
+      <div class="duyuru-badge yakin">⏳ YAKINDA</div>
+      <div class="duyuru-baslik">v6.0 — Savaş Sistemi</div>
+      <div class="duyuru-metin">Detaylı savaş mekaniği, ordu komutanları, kuşatma olayları ve zafer/yenilgi anlatıları geliyor.</div>
+    </div>
+
+    <div class="duyuru-item">
+      <div class="duyuru-badge yakin">⏳ YAKINDA</div>
+      <div class="duyuru-baslik">Mobil Uyum</div>
+      <div class="duyuru-metin">Telefon ekranları için optimize edilmiş arayüz planlanıyor.</div>
+    </div>
+
+    <div class="duyuru-item">
+      <div class="duyuru-badge bilgi">ℹ️ BİLGİ</div>
+      <div class="duyuru-baslik">Açık Kaynak</div>
+      <div class="duyuru-metin">Demir Taht GitHub'da herkese açık. Katkıda bulunmak isteyenler @diskiriminiant ile iletişime geçebilir.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Hanedan Silsilesi -->
+<div class="dev-panel" id="panel-silsile">
+  <div class="dev-panel-header">
+    <span class="dev-panel-title">👑 HANEDAN SİLSİLESİ</span>
+    <button class="dev-panel-close" onclick="closeSilsile()">✕</button>
+  </div>
+  <div class="dev-panel-body" id="silsile-icerik">
+    <div class="silsile-bos">Henüz tarih yazılmadı.<br>Hükümdarlar buraya geçecek.</div>
+  </div>
 </div>
 
 <!-- Twitter Pop-up -->
@@ -1232,9 +1543,11 @@ body {
       <button class="pause-link" onclick="showScreen('settings')"><span>⚙️</span> AYARLAR</button>
       <button class="pause-link" onclick="showScreen('about')"><span>📖</span> HAKKINDA</button>
       <button class="pause-link" onclick="openDonate()"><span>🪙</span> BAĞIŞ YAP</button>
+      <button class="pause-link" onclick="openSilsile();togglePause()"><span>👑</span> HANEDAN SİLSİLESİ</button>
       <button class="pause-link" onclick="toggleHistory()"><span>📜</span> HANEDAN TARİHİ</button>
       <button class="pause-link" onclick="if(confirm('Ana menüye dön?')){showScreen('intro');location.reload()}"><span>🏠</span> ANA MENÜ</button>
     </div>
+  </div>
   </div>
 
 </div>
@@ -1970,6 +2283,7 @@ function startNewGame() {
     history: [],
     rulerTrait: selectedTrait,
     tema: selectedTema,
+    silsile: [],
     neighbors: {}
   };
   initNeighbors();
@@ -1994,6 +2308,7 @@ function loadGame() {
   if (!G.children) G.children = [];
   if (!G.neighbors) { initNeighbors(); }
   if (!G.rulerTrait) G.rulerTrait = 'adil';
+  if (!G.silsile) G.silsile = [];
   if (!G.tema) G.tema = 'ortacag';
   setTimeout(() => applyTema(G.tema), 100);
   eventPool = shuffled([...ALL_EVENTS_COMBINED]);
@@ -2243,7 +2558,6 @@ function finishTurn(choice) {
 
   updateNeighborUI();
   updateHudScore();
-  updateHarita();
 
   if (!checkDeath()) {
     if (!checkSuccession()) {
@@ -2266,6 +2580,18 @@ function checkDeath() {
 
   if (dead) {
     playDeath();
+    // Silsileye ekle
+    if (!G.silsile) G.silsile = [];
+    const { toplam: olumSkoru } = hesaplaFinalSkor();
+    G.silsile.push({
+      nesil: G.generation,
+      isim: G.ruler,
+      unvan: G.title,
+      yil: G.yearsInPower,
+      olum: DEATH_REASONS[reasonKey]?.split('.')[0] || 'Hanedan çöktü',
+      trait: G.rulerTrait ? (TRAITS[G.rulerTrait]?.icon + ' ' + TRAITS[G.rulerTrait]?.name) : null,
+      skor: olumSkoru
+    });
     let reason = (DEATH_REASONS[reasonKey] || 'Hanedan tarihe karıştı.')
       .replace('{title}', G.title).replace('{ruler}', G.ruler);
     document.getElementById('ov-go-reason').textContent = reason;
@@ -3766,13 +4092,12 @@ const TOPRAK_RENKLERI = {
 
 function toggleHarita() {
   const panel = document.getElementById('harita-panel');
-  panel.classList.toggle('visible');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
 }
 
 function updateHarita() {
   if (!G.stats) return;
-  const toggle = document.getElementById('harita-toggle');
-  if (toggle) toggle.classList.add('visible');
+
 
   const ort = STAT_KEYS.reduce((s,k) => s+G.stats[k], 0) / STAT_KEYS.length;
 
@@ -3819,6 +4144,85 @@ document.addEventListener('click', function(e) {
     closeAllPopups();
   }
 });
+
+
+// ============================================================
+// HANEDAN SİLSİLESİ
+// ============================================================
+function openSilsile() {
+  renderSilsile();
+  document.getElementById('silsile-bg').classList.add('open');
+  document.getElementById('panel-silsile').classList.add('open');
+}
+
+function closeSilsile() {
+  document.getElementById('silsile-bg').classList.remove('open');
+  document.getElementById('panel-silsile').classList.remove('open');
+}
+
+function renderSilsile() {
+  const el = document.getElementById('silsile-icerik');
+  if (!el) return;
+
+  // Aktif oyun yoksa localStorage'dan al
+  const saveRaw = localStorage.getItem('demirTahtV4');
+  const gameData = saveRaw ? JSON.parse(saveRaw) : null;
+  const silsile = gameData?.silsile || G?.silsile || [];
+
+  if (!silsile || silsile.length === 0) {
+    el.innerHTML = '<div class="silsile-bos">Henüz tamamlanan hükümdar yok.<br>İlk hükümdarın tarihe geçmesini bekle.</div>';
+    return;
+  }
+
+  el.innerHTML = silsile.map(h => `
+    <div class="silsile-item">
+      <div class="silsile-nesil">${h.nesil}.</div>
+      <div>
+        <div class="silsile-isim">${h.unvan} ${h.isim}</div>
+        <div class="silsile-detay">
+          ${h.yil} yıl hüküm sürdü
+          ${h.olum ? ` · ${h.olum}` : ''}
+          ${h.trait ? ` · ${h.trait}` : ''}
+        </div>
+      </div>
+      <div class="silsile-skor">${(h.skor||0).toLocaleString('tr-TR')} puan</div>
+    </div>
+  `).reverse().join('');
+}
+
+function toggleDevPanel(id) {
+  const panel = document.getElementById('panel-' + id);
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+  // Tüm dev panelleri kapat
+  document.querySelectorAll('.dev-panel').forEach(p => {
+    if (p.id !== 'panel-silsile') p.classList.remove('open');
+  });
+  if (!isOpen) panel.classList.add('open');
+}
+
+// Pause menüsüne silsile butonu eklenecek — mevcut JS'e hook
+const _origCrownHeir = window.crownHeir;
+window.crownHeir = function(idx, heir) {
+  // Mevcut hükümdarı silsileye ekle
+  if (G && G.ruler) {
+    if (!G.silsile) G.silsile = [];
+    const { toplam } = hesaplaFinalSkor();
+    G.silsile.push({
+      nesil: G.generation,
+      isim: G.ruler,
+      unvan: G.title,
+      yil: G.yearsInPower,
+      olum: 'Eceliyle vefat etti',
+      trait: G.rulerTrait ? (TRAITS[G.rulerTrait]?.icon + ' ' + TRAITS[G.rulerTrait]?.name) : null,
+      skor: toplam
+    });
+  }
+  _origCrownHeir(idx, heir);
+};
+
+// Game over'da da silsileye ekle
+const _origCheckDeath = checkDeath;
 
 window.onload = () => {
   loadSettings();
