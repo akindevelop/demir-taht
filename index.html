@@ -929,6 +929,14 @@ body {
   top: 20px; left: 66px;
   width: 320px; max-height: 460px;
 }
+#panel-basarimlar {
+  top: 20px; right: 66px;
+  width: 320px; max-height: 460px;
+}
+#panel-toplist {
+  top: 20px; right: 66px;
+  width: 360px; max-height: 520px;
+}
 #panel-silsile {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
@@ -1133,6 +1141,12 @@ body {
   <button class="left-btn" onclick="toggleDevPanel('duyuru')" title="Duyurular" style="font-size:13px">◈</button>
 </div>
 
+<!-- Sağ Üst — Başarımlar & Sıralama Butonları (sosyal ikonlarla aynı stil) -->
+<div id="top-right-btn-bar" style="position:fixed;top:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:10">
+  <button class="left-btn" onclick="toggleDevPanel('basarimlar')" title="Başarımlar" style="font-size:13px">🏆</button>
+  <button class="left-btn" onclick="openTopList()" title="Küresel Sıralama" style="font-size:13px">🌍</button>
+</div>
+
 <!-- Sol Alt — Sosyal Medya Butonları -->
 <div id="social-btn-bar" style="position:fixed;bottom:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:10">
   <button class="left-btn" onclick="togglePopup('popup-twitter')" title="Twitter / X">𝕏</button>
@@ -1151,6 +1165,30 @@ body {
 
 <!-- Silsile arka plan -->
 <div class="silsile-overlay-bg" id="silsile-bg" onclick="closeSilsile()"></div>
+
+
+<div class="dev-panel" id="panel-basarimlar">
+  <div class="dev-panel-header">
+    <span class="dev-panel-title">🏆 BAŞARIMLAR</span>
+    <button class="dev-panel-close" onclick="toggleDevPanel('basarimlar')">✕</button>
+  </div>
+  <div class="dev-panel-body" id="basarimlar-icerik" style="display: flex; flex-direction: column; gap: 10px;">
+    </div>
+</div>
+
+<div class="dev-panel" id="panel-toplist">
+  <div class="dev-panel-header">
+    <span class="dev-panel-title">🌍 KÜRESEL SIRALAMA (TOP 50)</span>
+    <button class="dev-panel-close" onclick="toggleDevPanel('toplist')">✕</button>
+  </div>
+  <div class="dev-panel-body" id="toplist-icerik">
+    <div style="text-align:center; color:var(--gold); margin-bottom:15px; font-style:italic; font-size:12px;">En uzun süre tahtta kalan efsanevi hanedanlar.</div>
+    <div id="toplist-rows" style="display:flex; flex-direction:column; gap:8px;"></div>
+  </div>
+</div>
+
+<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
 
 <!-- Geliştirici Notları -->
 <div class="dev-panel" id="panel-devnotes">
@@ -1210,6 +1248,15 @@ body {
       <div class="version-item">Geliştirici notları ve duyuru paneli</div>
     </div>
 
+    <div class="version-block">
+      <div class="version-tag">v6.0 — Başarımlar & Komşular</div>
+      <div class="version-item">50+ benzersiz başarımdan oluşan sistem (zaman, ekonomi, diplomasi, hanedan, gizli hedefler).</div>
+      <div class="version-item">Sağ üstte kısayol butonları ve detaylı başarımlar paneli.</div>
+      <div class="version-item">Küresel sıralama ekranı (mock liderlik tablosu, ileride sunucu entegrasyonu).</div>
+      <div class="version-item">Komşu krallıklar paneli için gelişmiş olay havuzları (saldırı, ticaret, diplomasi, ittifak).</div>
+      <div class="version-item">Komşu ilişkileri artık olaylara göre dinamik olarak artıp azalıyor.</div>
+    </div>
+
   </div>
 </div>
 
@@ -1223,8 +1270,8 @@ body {
 
     <div class="duyuru-item">
       <div class="duyuru-badge yeni">🟢 YENİ</div>
-      <div class="duyuru-baslik">v5.0 Yayında!</div>
-      <div class="duyuru-metin">Osmanlı ve Bizans temaları, 130+ olay, hanedan silsilesi ve geliştirici notları ile büyük güncelleme yayına girdi.</div>
+      <div class="duyuru-baslik">v6.0 — Başarımlar & Komşular</div>
+      <div class="duyuru-metin">50+ başarımdan oluşan yeni sistem, sağ üst kısayol tuşları, başarımlar paneli ve geliştirilen komşu krallıklar olayları artık oyunda. Her hamlen, yeni bir hedefe biraz daha yaklaştırıyor.</div>
     </div>
 
     <div class="duyuru-item">
@@ -1523,6 +1570,18 @@ body {
     <h2 class="ov-title" id="ov-result-title">KADERİN CİLVESİ</h2>
     <p class="ov-desc" id="ov-result-desc"></p>
     <button class="ov-btn" onclick="closeResult()">DEVAM ET →</button>
+  </div>
+
+  <!-- Başarım overlay -->
+  <div class="overlay" id="ov-achievement">
+    <div class="victory-emblem" id="ach-icon">🏆</div>
+    <div class="victory-unvan" id="ach-title">Başarım Kazanıldı</div>
+    <div class="dynasty-epitaph" id="ach-desc" style="margin-top:10px;font-size:14px;"></div>
+    <div style="font-size:12px;color:rgba(200,168,75,0.7);margin-top:8px" id="ach-counter"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px">
+      <button class="ov-btn gold" onclick="document.getElementById('ov-achievement').classList.remove('active')">DEVAM ET →</button>
+      <button class="ov-btn" onclick="toggleDevPanel('basarimlar');document.getElementById('ov-achievement').classList.remove('active')">🏆 BAŞARIMLARI GÖR</button>
+    </div>
   </div>
 
 
@@ -2128,7 +2187,7 @@ const NEIGHBOR_EVENTS_HOSTILE = [
   {
     id: 'neighbor_raid', icon: '🔥', tag: 'KOMŞU · SALDIRI',
     title: 'Sınırda Alevler',
-    desc: '{komsu_flag} {komsu} sınır köylerinize baskın düzenledi. Birkaç köy yakıldı, hayvanlar sürüldü. Sınır komutanınız yardım bekliyor.',
+    desc: '{komsu_flag} {komsu} sınır köylerinize gece baskını düzenledi. Ufuk çizgisi boyunca saman çatıların alev aldığı, kaçan hayvan sürülerinin çığlıklarının yankılandığı haberleri geliyor. Sınır komutanınız, "Eğer şimdi karşılık vermezsek bu sadece başlangıç olacak" diye rapor gönderiyor.',
     choices: [
       { text: '⚔️ Orduyu gönder, misilleme yap.', effects: { ordu: -15, halk: 5 }, neighborEffect: { id: '_current_', delta: -15 } },
       { text: '🕊️ Elçi gönder, tazminat talep et.', effects: { hazine: 10 }, neighborEffect: { id: '_current_', delta: 5 } },
@@ -2138,11 +2197,21 @@ const NEIGHBOR_EVENTS_HOSTILE = [
   {
     id: 'neighbor_spy', icon: '🕵️', tag: 'KOMŞU · CASUSLİK',
     title: 'Gölge Oyunları',
-    desc: '{komsu_flag} {komsu}\'nun casusları sarayınızda yakalandı. Üzerlerinde krallığın savunma planları vardı.',
+    desc: 'Sarayın en sessiz koridorunda, gecenin bir yarısı, meşale ışığında iki gölge yakalanıyor. Üzerlerinden, {komsu_flag} {komsu} armasını taşıyan mühürlü bir tomar ve krallığınızın ayrıntılı savunma planları çıkıyor. Komutanlarınız, bu casusların nasıl kullanılacağı konusunda ikiye bölünmüş durumda.',
     choices: [
       { text: '😠 Casusları kamuoyu önünde idam et.', effects: { ordu: 5, soylu: 10 }, neighborEffect: { id: '_current_', delta: -20 } },
       { text: '🤝 Casusları iade et. Gerginliği düşür.', effects: { kilise: 5 }, neighborEffect: { id: '_current_', delta: 10 } },
       { text: '🔄 Casusları çift ajan olarak kullan.', effects: { ordu: 10, hazine: -5 }, neighborEffect: { id: '_current_', delta: -5 } }
+    ]
+  },
+  {
+    id: 'neighbor_border_dispute', icon: '📜', tag: 'KOMŞU · SINIR',
+    title: 'Haritalar Çakışıyor',
+    desc: 'Sarayınızın büyük salonunda masanın üzerine sararmış bir harita seriliyor. {komsu_flag} {komsu} elçileri, mürekkebi solmuş çizgileri gösterip iki sınır köyünün "tarihsel olarak" onlara ait olduğunu iddia ediyor. Masanın etrafındaki soylular hararetle tartışırken, dışarıda o köylerde yaşayan halk nefesini tutmuş bekliyor.',
+    choices: [
+      { text: '🗺️ Haritayı kabul et, köyleri ver.', effects: { halk: -5, soylu: -10 }, neighborEffect: { id: '_current_', delta: 15 } },
+      { text: '⚔️ Sınırı koru, geri adım atma.', effects: { ordu: -10, halk: 5 }, neighborEffect: { id: '_current_', delta: -10 } },
+      { text: '⚖️ Ortak komisyon kur, inceleme başlat.', effects: { kilise: 5 }, neighborEffect: { id: '_current_', delta: 5 } }
     ]
   },
 ];
@@ -2151,7 +2220,7 @@ const NEIGHBOR_EVENTS_NEUTRAL = [
   {
     id: 'neighbor_trade', icon: '🚢', tag: 'KOMŞU · TİCARET',
     title: 'Ticaret Teklifı',
-    desc: '{komsu_flag} {komsu} bir ticaret antlaşması teklif etti. Karşılıklı gümrük muafiyeti ve ortak pazar.',
+    desc: '{komsu_flag} {komsu}\'dan gelen elçiler, ağır sandıklar ve parşömen tomarlarıyla taht salonunu dolduruyor. Sunulan anlaşma, iki krallık arasında gümrüklerin kaldırılmasını, ortak pazar kurulmasını ve belirli ürünlerde tekel hakkının paylaşılmasını içeriyor. Hazinenizin başındaki kâhya heyecanlı, ancak bazı loncalar böyle bir adımın iç ticareti öldürebileceğinden korkuyor.',
     choices: [
       { text: '✒️ İmzala. Ticaret krallığı güçlendirir.', effects: { hazine: 20, halk: 10 }, neighborEffect: { id: '_current_', delta: 15 } },
       { text: '🔍 Koşullu kabul et. Bazı maddeleri müzakere et.', effects: { hazine: 10 }, neighborEffect: { id: '_current_', delta: 5 } },
@@ -2161,10 +2230,20 @@ const NEIGHBOR_EVENTS_NEUTRAL = [
   {
     id: 'neighbor_refugees', icon: '🚶', tag: 'KOMŞU · GÖÇ',
     title: 'Sınırda Kafile',
-    desc: '{komsu_flag} {komsu}\'daki kıtlık nedeniyle binlerce kişi sınırınıza dayandı. Komşu kral onları geri almıyor.',
+    desc: 'Soğuk bir sabah, sınır muhafızlarınızdan haber geliyor: Görüş ufkuna kadar uzanan bir insan seli kapınıza dayanmış durumda. {komsu_flag} {komsu}\'daki kıtlık yüzünden evlerini terk eden binlerce kadın, çocuk ve yaşlı, gözlerinde umutsuz ama hâlâ bir kıvılcım taşıyan bakışlarla krallığınıza sığınmak istiyor. Komşu kral, kendi sorununu sizin topraklarınıza yıkmış gibi görünüyor.',
     choices: [
       { text: '🤲 Kabul et. İnsan hayatı önemlidir.', effects: { halk: 15, hazine: -15 }, neighborEffect: { id: '_current_', delta: 10 } },
       { text: '🚧 Geri gönder. Bu senin sorunun.', effects: { kilise: -10, soylu: 10 }, neighborEffect: { id: '_current_', delta: -10 } }
+    ]
+  },
+  {
+    id: 'neighbor_culture_fest', icon: '🎭', tag: 'KOMŞU · KÜLTÜR',
+    title: 'Sınır Şenliği',
+    desc: '{komsu_flag} {komsu} elçileri, renkli afişler ve müzisyenler eşliğinde sarayınıza geliyor. Sınır kasabasında; müzik, dans, at yarışları ve ortak pazarla dolu büyük bir festival düzenlemek istediklerini söylüyorlar. Bazı soylular bu fırsatı halklar arasında bir köprü olarak görürken, diğerleri iki ordunun da aynı yerde eğlenmesinin tehlikeli olabileceğini fısıldıyor.',
+    choices: [
+      { text: '🎶 Ortak festival yap. Halk kaynaşsın.', effects: { halk: 15, hazine: -10 }, neighborEffect: { id: '_current_', delta: 10 } },
+      { text: '🧮 Sadece ticaret standı kur. Eğlence minimum.', effects: { hazine: 5 }, neighborEffect: { id: '_current_', delta: 0 } },
+      { text: '🚫 Reddet. Sınırlar kesin kalmalı.', effects: { soylu: 5, halk: -5 }, neighborEffect: { id: '_current_', delta: -10 } }
     ]
   },
 ];
@@ -2173,7 +2252,7 @@ const NEIGHBOR_EVENTS_FRIENDLY = [
   {
     id: 'neighbor_wedding', icon: '💒', tag: 'KOMŞU · DİPLOMASİ',
     title: 'Kraliyet Düğünü',
-    desc: '{komsu_flag} {komsu} veliahtı ile ailen arasında bir evlilik ittifakı teklif etti.',
+    desc: 'Sarayınıza gelen zümrüt yeşili mühürlü mektup, {komsu_flag} {komsu} kraliyet hanedanından. Mektupta, sizin hanedanınız ile onların veliahtı arasında bir evlilik ittifakı öneriliyor. Böyle bir düğün; haritaların yeniden çizilmesi, asırlık düşmanlıkların sona ermesi ve aynı masada oturan iki krallık anlamına gelebilir. Ancak bazı soylular, kanınızın "yabancılaşmasından" endişe ediyor.',
     choices: [
       { text: '💍 Kabul et. İttifak güçlensin.', effects: { soylu: 15, halk: 5 }, neighborEffect: { id: '_current_', delta: 20 } },
       { text: '🤝 Ticaret antlaşması yeterli. Evlilik değil.', effects: { hazine: 10 }, neighborEffect: { id: '_current_', delta: 5 } },
@@ -2183,10 +2262,20 @@ const NEIGHBOR_EVENTS_FRIENDLY = [
   {
     id: 'neighbor_help', icon: '🤝', tag: 'KOMŞU · YARDIM',
     title: 'Dostun Eli',
-    desc: '{komsu_flag} {komsu}, kıtlıktan haberiniz olduğunu ve tahıl yardımı yapmak istediğini bildirdi.',
+    desc: 'Kendiniz kıtlıkla boğuşurken, {komsu_flag} {komsu} sarayından gelen bir haberci, tahıl yüklü gemilerin ve arabaların size doğru yola çıktığını bildiriyor. Müttefikiniz, \"Bugün sana yardım ederim, yarın sen benim yanımda olursun\" diyor. Bazı danışmanlar bu yardımı minnetle kabul etmek gerektiğini savunurken, gururlu soylular bu teklifin krallığınızı zayıf göstereceğini iddia ediyor.',
     choices: [
       { text: '🙏 Kabul et. Dostluk karşılıklıdır.', effects: { halk: 20, kilise: 5 }, neighborEffect: { id: '_current_', delta: 10 } },
       { text: '💪 Reddet. Başkasına muhtaç değiliz.', effects: { soylu: 10 }, neighborEffect: { id: '_current_', delta: -5 } }
+    ]
+  },
+  {
+    id: 'neighbor_student', icon: '📚', tag: 'KOMŞU · ELÇİ',
+    title: 'Soylu Çıraklar',
+    desc: '{komsu_flag} {komsu}, en parlak genç soylularından oluşan küçük bir kafileyi sarayınıza gönderiyor. Onları sizin mahkemenizde diplomasi, savaş sanatı ve yönetim konularında eğitmenizi istiyorlar. Bu, iki hanedan arasındaki bağları derinleştirebilir; fakat başdanışmanınız, bu gençlerin aynı zamanda ileride krallığınızı çok iyi tanıyan rakipler olabileceğini hatırlatıyor.',
+    choices: [
+      { text: '📖 Kabul et. Saray okulu güçlensin.', effects: { soylu: 10, kilise: 5 }, neighborEffect: { id: '_current_', delta: 10 } },
+      { text: '💰 Yüksek ücret iste.', effects: { hazine: 15, soylu: -5 }, neighborEffect: { id: '_current_', delta: -5 } },
+      { text: '🚫 Reddet. Saray sırlarımız var.', effects: { ordu: 5 }, neighborEffect: { id: '_current_', delta: -10 } }
     ]
   },
 ];
@@ -2420,16 +2509,27 @@ function updateUI() {
 // OLAY YÖNETİMİ
 // ============================================================
 function nextEvent() {
-  // Zincir olayı varsa önce o
+  // F5 BUG FIX: Eğer kaydedilmiş bir olay varsa, yeni olay çekme, olanı göster!
+  if (G.savedEvent) {
+    currentEvent = G.savedEvent;
+    showEvent(G.savedEvent);
+    return;
+  }
+
   if (G.chainQueue && G.chainQueue.length > 0) {
     const chainId = G.chainQueue.shift();
     const ev = ALL_EVENTS_COMBINED.find(e => e.id === chainId);
-    if (ev) { G.lastWasChain = true; showEvent(ev); return; }
+    if (ev) { 
+      G.lastWasChain = true; 
+      G.savedEvent = ev; // Olayı kaydet
+      saveGame(); 
+      showEvent(ev); 
+      return; 
+    }
   }
 
   if (eventPool.length === 0) eventPool = shuffled([...ALL_EVENTS_COMBINED]);
 
-  // Flag bazlı olayları önceliklendir
   let ev = null;
   for (let i = 0; i < eventPool.length; i++) {
     const e = eventPool[i];
@@ -2438,6 +2538,9 @@ function nextEvent() {
     break;
   }
   if (!ev) ev = eventPool.pop();
+  
+  G.savedEvent = ev; // YENİ: Seçilen olayı hafızaya kazı
+  saveGame();
   showEvent(ev);
 }
 
@@ -2507,6 +2610,7 @@ function showEvent(ev) {
 
 window.handleChoice = function(idx) {
   playClick();
+  G.savedEvent = null;
   const choice = currentEvent.choices[idx];
   try { addHistory(currentEvent.title + ': ' + choice.text.substring(0, 50)); } catch(e) {}
 
@@ -2531,6 +2635,13 @@ window.handleChoice = function(idx) {
     const success = Math.random() <= (choice.probability + probBonus);
     const effects = success ? choice.successEffects : choice.failEffects;
     applyEffects(effects);
+
+    // Komşu ilişkisi etkisi
+    if (choice.neighborEffect) {
+      let nId = choice.neighborEffect.id;
+      if (nId === '_current_') nId = currentEvent._neighborId;
+      if (nId) changeNeighborRelation(nId, choice.neighborEffect.delta);
+    }
     if (success) playSuccess(); else playFail();
     if (success && choice.successChain) G.chainQueue.push(choice.successChain);
     if (!success && choice.failChain) G.chainQueue.push(choice.failChain);
@@ -2544,6 +2655,14 @@ window.handleChoice = function(idx) {
 
   // Normal
   applyEffects(choice.effects);
+
+  // Komşu ilişkisi etkisi
+  if (choice.neighborEffect) {
+    let nId = choice.neighborEffect.id;
+    if (nId === '_current_') nId = currentEvent._neighborId;
+    if (nId) changeNeighborRelation(nId, choice.neighborEffect.delta);
+  }
+
   if (choice.chain) G.chainQueue.push(choice.chain);
   finishTurn(choice);
 };
@@ -2598,6 +2717,14 @@ function finishTurn(choice) {
   updateNeighborUI();
   updateHudScore();
 
+  // Komşu krallık olayı tetikleme şansı
+  if (!checkNeighborEvent()) {
+    // Eğer komşu olayı çıkmadıysa normal akışa devam et
+  }
+
+  // Her tur sonunda başarımları kontrol et
+  checkAchievements();
+
   if (!checkDeath()) {
     if (!checkSuccession()) {
       nextEvent();
@@ -2646,8 +2773,8 @@ function checkDeath() {
 }
 
 function checkSuccession() {
-  const deathChance = Math.max(0, (G.age - 50) * 0.04);
-  if (G.age > 50 && Math.random() < deathChance) {
+  const deathChance = Math.max(0, (G.age - 45) * 0.06);
+  if (G.age > 45 && Math.random() < deathChance) {
     triggerSuccession();
     return true;
   }
@@ -3142,6 +3269,126 @@ const ALL_EVENTS = [
       { text: '🙇 Papaya teslim ol. Kilise\'ye boyun eğ.', effects: { kilise: 35, halk: -15, soylu: -5 } },
       { text: '⚔️ Aforoza meydan oku. Halk seni destekliyor.', effects: { kilise: -50, halk: 30, soylu: -20 }, setFlag: 'reform_hukumdar' },
       { text: '🤝 Özel müzakere başlat. Orta yol bul.', effects: { kilise: -10, halk: 5 } }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════
+  //  BÖLÜM VIII-B — DOĞU KRALLIĞI ZİNCİRİ
+  // ══════════════════════════════════════════════════════
+
+  {
+    id: 'dogu_ultimatom', icon: '🔴', tag: 'DOĞU KRALLIĞI',
+    title: 'Doğu\'dan Kızıl Mühür',
+    desc: 'Akşamüstü saray avlusuna, kızıl balmumlu bir tomar getirildi. Mühür, Doğu Krallığı\'nın parlak kırmızı armasıydı. Elçi, sesi bütün salonda yankılanacak bir tonda fermanı okudu: "{komsu_flag} Doğu Kralı, yıllardır tartışmalı olan sınır ovasının derhal boşaltılmasını ve üzerindeki tüm kalelerin yıkılmasını talep eder." Haritada söz konusu bölge, hem tahıl ambarlarınızın hem de geçiş yollarınızın kalbiydi. Konsey masasında yumruklar sıkıldı, nefesler tutuldu.',
+    choices: [
+      { text: '⚔️ Ültimatomu reddet. Sınırda yeni kaleler inşa et.', effects: { ordu: 15, halk: 5, hazine: -15 }, setFlag: 'dogu_savas_gerilimi', neighborEffect: { id: 'dogu', delta: -20 }, chain: 'dogu_sinir_kalesi' },
+      { text: '🤝 Ovayı resmen paylaş. Ortak vergilendirme sistemi kur.', effects: { hazine: 10, halk: 5, soylu: -5 }, neighborEffect: { id: 'dogu', delta: 15 }, setFlag: 'dogu_ortak_ova' },
+      { text: '🕊️ Zamana oyna. Elçiye "konseyle istişare" bahanesiyle belirsiz bir cevap ver.', effects: { soylu: 5, halk: -5 }, neighborEffect: { id: 'dogu', delta: -5 } }
+    ]
+  },
+  {
+    id: 'dogu_sinir_kalesi', icon: '🏹', tag: 'DOĞU KRALLIĞI · ZİNCİR',
+    requires: { flag: 'dogu_savas_gerilimi' },
+    title: 'Kanla Çizilen Harita',
+    desc: 'Sınırdaki yeni kaleleriniz daha tamamlanmadan, Doğu Krallığı\'nın kızıl bayrakları ufukta belirdi. Keşif raporlarına göre, surlarınızın önüne "gözdağı" için bile olsa beklediğinizden çok daha büyük bir ordu yığılmıştı. Komutanınız, harita üzerinde küçük tahta askerleri kaydırarak üç plan sundu: hızlı bir gece baskınıyla düşmanın moralini kırmak, kalelerde kilitlenip onları yıpratmak ya da beklenmedik bir hamleyle kuzeyden dolanmak. Her yol, başka bir hikâyeye açılıyordu.',
+    choices: [
+      { text: '🌙 Gece baskını. Komando birlikleriyle ordugâhlarına sız.', probability: 0.6,
+        successEffects: { ordu: 20, halk: 10, hazine: -10 }, 
+        failEffects: { ordu: -25, halk: -10 },
+        successText: 'Baskın şafakla birlikte sona erdi. Düşman ordugâhı karıştı, Doğu ordusu geri çekilmek zorunda kaldı. Sınır bir süreliğine güvende.',
+        failText: 'Plan sızdı ya da şans sizden yana değildi. Baskın bir tuzağa dönüştü, seçkin askerlerinizden birçoğu geri dönemedi.',
+        neighborEffect: { id: 'dogu', delta: -15 } },
+      { text: '🛡️ Kalelere çekil, uzun bir kuşatmaya hazırlan.', effects: { ordu: -10, halk: -5, hazine: -15 }, neighborEffect: { id: 'dogu', delta: -5 }, chain: 'dogu_ateskes' },
+      { text: '♟️ Ana gücü oyalarken küçük bir birlikle düşmanın ikmal hattına saldır.', probability: 0.5,
+        successEffects: { ordu: 15, hazine: 15 }, 
+        failEffects: { ordu: -15, soylu: -10 },
+        successText: 'İkmal hatları vuruldu. Doğu ordusu aç kaldı, yüksek kayıplar vermeden geri çekilmek zorunda kaldı. Harita bir süre daha sizde kaldı.',
+        failText: 'İkmal hattı iyi korunuyordu. Baskın başarısız oldu, planlarınız ele geçirildi ve Doğu sarayına gitti.',
+        neighborEffect: { id: 'dogu', delta: -10 } }
+    ]
+  },
+  {
+    id: 'dogu_ateskes', icon: '🕊️', tag: 'DOĞU KRALLIĞI · ZİNCİR',
+    requires: { flag: 'dogu_savas_gerilimi' },
+    title: 'Dumanın Ardından',
+    desc: 'Aylar süren ufak çatışmalar, yakılıp yıkılan köyler ve iki tarafta da mezarlara dönüşen tepelerden sonra savaşın ateşi yavaş yavaş sönmeye başladı. Halkınız yorulmuş, ordunuz yıpranmış, hazine ise derin yaralar almıştı. Tam bu sırada {komsu_flag} Doğu elçisi yeniden salona girdi; bu kez yanında harp haritaları değil, beyaz bir kumaşa sarılı bir zeytin dalı taşıyordu. Önünüze üç farklı barış taslağı koydu; her biri başka bir bedel istiyordu.',
+    choices: [
+      { text: '📜 Sınır ovasını resmen ikiye böl, kalelerin bir kısmını yık.', effects: { halk: 10, ordu: -10, hazine: -5 }, neighborEffect: { id: 'dogu', delta: 20 }, setFlag: 'dogu_denge_baris' },
+      { text: '💰 Tazminat öde ama tek bir taş bile yerinden oynatma.', effects: { hazine: -30, halk: 5, soylu: 5 }, neighborEffect: { id: 'dogu', delta: 10 } },
+      { text: '⚔️ Barışı reddet. "Bu topraklar müzakere edilemez" de.', effects: { ordu: 10, halk: -10 }, neighborEffect: { id: 'dogu', delta: -20 }, setFlag: 'dogu_ebedi_dusman' }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════
+  //  BÖLÜM VIII-C — BATI DÜKALIĞI ZİNCİRİ
+  // ══════════════════════════════════════════════════════
+
+  {
+    id: 'bati_lonca_konseyi', icon: '🔵', tag: 'BATI DÜKALIĞI',
+    title: 'Mavi Bayraklı Loncalar',
+    desc: 'Batı Dükalığı\'ndan gelen elçiler, liman şehrinizin büyük hanında üç farklı loncanın mühürlerini masaya bıraktı. Mavi balmumlu bu mühürler; deniz tacirleri, gemi yapımcıları ve bankerlerden oluşan güçlü bir konseyin sembolüydü. Size, "Ortak bir Akdeniz ticaret ligi" kurmayı teklif ediyorlar. Haritalar çıkarılıyor, vergi oranları ve tekel hakları konuşuluyor. Fakat kendi tüccarlarınız bu anlaşmanın, yerel pazar üzerindeki hâkimiyetlerini sarsacağından ürkmüş durumda.',
+    choices: [
+      { text: '⚓ Batı ile tam ticaret ittifakı kur. Limanlarımızı aç.', effects: { hazine: 25, halk: 10, soylu: -10 }, neighborEffect: { id: 'bati', delta: 20 }, setFlag: 'bati_ticaret_ligi', chain: 'bati_liman_krizi' },
+      { text: '📜 Sınırlı anlaşma yap. Sadece bazı mallarda ortaklık.', effects: { hazine: 10, halk: 5 }, neighborEffect: { id: 'bati', delta: 10 } },
+      { text: '🚪 Reddet. Kendi tüccarlarımız bir lige ihtiyaç duymaz.', effects: { hazine: -5, soylu: 10, halk: -5 }, neighborEffect: { id: 'bati', delta: -15 }, setFlag: 'bati_kirik_guven' }
+    ]
+  },
+  {
+    id: 'bati_liman_krizi', icon: '⚓', tag: 'BATI DÜKALIĞI · ZİNCİR',
+    requires: { flag: 'bati_ticaret_ligi' },
+    title: 'Limanlarda Mavi Yelkenler',
+    desc: 'Aylar içinde liman şehirlerinizdeki manzara değişti. Rıhtımlarda artık {komsu_flag} Batı Dükalığı\'nın mavi yelkenli gemileri çoğunlukta. Yerel tacirler, depo kiralarının ve rıhtım ücretlerinin yabancı loncalar lehine değiştiğini söylüyor. Şehrin en eski tüccarı, "Bugün bize ortak diyorlar, yarın biz onlara kira öder hale geliriz" diye uyarıyor. Buna karşılık hazinedar, gümrük gelirlerinin rekor kırdığını gösteren tabloları önünüze seriyor.',
+    choices: [
+      { text: '🧾 Lonca kurallarını yeniden yaz. Yerli tacirleri koru.', effects: { halk: 10, soylu: 5, hazine: -10 }, neighborEffect: { id: 'bati', delta: -10 }, chain: 'bati_lonca_isyani' },
+      { text: '💰 Yabancı loncalardan ek pay talep et.', effects: { hazine: 20, halk: -5 }, neighborEffect: { id: 'bati', delta: -5 } },
+      { text: '🌍 Akışı bozma. Serbest ticaret, uzun vadede kazanır.', effects: { hazine: 15, halk: 5, soylu: -5 }, neighborEffect: { id: 'bati', delta: 5 } }
+    ]
+  },
+  {
+    id: 'bati_lonca_isyani', icon: '🔥', tag: 'BATI DÜKALIĞI · ZİNCİR',
+    requires: { flag: 'bati_ticaret_ligi' },
+    title: 'Tüccarların Gecesi',
+    desc: 'Bir gece, liman mahallesinde yangın çanları çalmaya başladı. Yabancı loncalara ait iki depo alevler içinde kaldı, duvarlara "Evimize dönün!" yazan kömürle çizilmiş mesajlar bırakıldı. Şehrin valisi, yerel tüccarların gizlice ayaklanma örgütlediğinden şüpheleniyor. {komsu_flag} Batı elçisi ise öfkeyle, "Bu saldırı bir savaş ilanıdır" diye bağırıyor ve derhal tazminat talep ediyor.',
+    choices: [
+      { text: '⚖️ Saldırıyı kınayıp suçluları yargıla. Batı\'ya tazminat öde.', effects: { hazine: -20, halk: -5, soylu: -10 }, neighborEffect: { id: 'bati', delta: 20 } },
+      { text: '🧱 Saldırıyı görmezden gel. "Yangın kazaydı" de.', effects: { halk: 5, soylu: 10 }, neighborEffect: { id: 'bati', delta: -20 }, setFlag: 'bati_gizli_gerilim' },
+      { text: '🤝 Ortak güvenlik konseyi kur. Limanı birlikte koruyun.', effects: { ordu: 5, hazine: -10 }, neighborEffect: { id: 'bati', delta: 10 } }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════════
+  //  BÖLÜM VIII-D — KUZEY KONFEDERASYONU ZİNCİRİ
+  // ══════════════════════════════════════════════════════
+
+  {
+    id: 'kuzey_kis_ordusu', icon: '⚪', tag: 'KUZEY KONFEDERASYONU',
+    title: 'Karların Altında Mızraklar',
+    desc: 'Kış erken geldi. Kuzey sınırınızda, ufka doğru uzanan beyaz bozkırın üzerinde gri duman sütunları yükseliyor. Keşifçiler, {komsu_flag} Kuzey Konfederasyonu\'na bağlı bazı klanların kendi aralarında anlaşmazlığa düştüğünü ve sınırınıza yakın kamplar kurduğunu bildiriyor. Bazı çadır direklerinde sizin hanedanınızın rengiyle örülmüş kumaşlar dalgalanıyor — bu, içlerinden bazılarının destek aradığı anlamına geliyor.',
+    choices: [
+      { text: '🤝 İsyan eden klanlara gizlice yardım et. Kuzey\'i içeriden zayıflat.', effects: { ordu: 10, hazine: -10 }, neighborEffect: { id: 'kuzey', delta: -15 }, setFlag: 'kuzey_ic_karisiklik', chain: 'kuzey_klan_meclisi' },
+      { text: '🛡️ Resmi sınır nöbetini artır, ama tarafsız kal.', effects: { ordu: 5, hazine: -5 }, neighborEffect: { id: 'kuzey', delta: 5 } },
+      { text: '🕊️ Kuzey liderine barış elçileri gönder. Arabulucu ol.', effects: { kilise: 5, halk: 5 }, neighborEffect: { id: 'kuzey', delta: 10 }, chain: 'kuzey_barisi' }
+    ]
+  },
+  {
+    id: 'kuzey_klan_meclisi', icon: '❄️', tag: 'KUZEY KONFEDERASYONU · ZİNCİR',
+    requires: { flag: 'kuzey_ic_karisiklik' },
+    title: 'Kurt Postlu Liderler',
+    desc: 'Kuzey rüzgârının uğultusu arasında, bir dağ geçidinde gizli bir klan meclisine davet edildiniz. Çevrenizi, kurt postuna bürünmüş, yüzleri rüzgârdan çatlamış reisler sarmış durumda. Bazıları sizin desteğinizle Konfederasyon liderini devirmek ve yerine, size daha sadık bir konsey kurmak istiyor. Diğerleri ise sadece kendi toprakları için daha fazla özerklik talep ediyor. Verdiğiniz her söz, hem kuzey rüzgârını hem de kendi halkınızın kaderini değiştirebilir.',
+    choices: [
+      { text: '👑 Yeni bir "Kuzey Yüksek Reisi" çıkar. Onu destekle.', effects: { ordu: 10, hazine: -10 }, neighborEffect: { id: 'kuzey', delta: -20 }, setFlag: 'kuzey_vekili' },
+      { text: '📜 Özerklik sözleri ver, ama doğrudan darbeye karışma.', effects: { halk: 5, soylu: -5 }, neighborEffect: { id: 'kuzey', delta: -5 } },
+      { text: '🚫 Destekten çekil. Kralı devirme işinde görünmek istemiyorsun.', effects: { ordu: -5, halk: 5 }, neighborEffect: { id: 'kuzey', delta: 10 } }
+    ]
+  },
+  {
+    id: 'kuzey_barisi', icon: '🕯️', tag: 'KUZEY KONFEDERASYONU · ZİNCİR',
+    title: 'Donmuş Nehirde Görüşme',
+    desc: 'Diplomasi heyetleriniz, kışın ortasında donmuş bir nehir üzerinde kurulan tahta bir köprüde Kuzey Konfederasyonu lideriyle buluşuyor. Nehrin altında buz sesleri, üstünde ise ağır kürkler içinde oturan savaş ağaları var. Lider, "İçimizde huzur yokken sınırına asker gönderemem" diyor. Sizden, kaçan bazı klan liderlerini iade etmenizi ve karşılığında yeni bir ticaret yolu açmayı teklif ediyor. Tarafsız kalmak ile taraf seçmek arasında ince bir çizgide yürüyorsunuz.',
+    choices: [
+      { text: '🚶 Kaçak klan liderlerini iade et. Kuzey liderini güçlendir.', effects: { ordu: 5, hazine: 10 }, neighborEffect: { id: 'kuzey', delta: 15 } },
+      { text: '🛡️ Onları koru. "Misafirimiz olan kimseyi teslim etmeyiz."', effects: { halk: 10, ordu: -5 }, neighborEffect: { id: 'kuzey', delta: -10 } },
+      { text: '📦 Ticaret yolunu kabul et ama iade kararını ertele.', effects: { hazine: 15 }, neighborEffect: { id: 'kuzey', delta: 5 } }
     ]
   },
 
@@ -4268,6 +4515,8 @@ window.onload = () => {
   if (localStorage.getItem('demirTahtV4')) {
     document.getElementById('btn-continue').style.display = 'flex';
   }
+  // Başarımlar paneli her zaman doldurulsun ki liste baştan görünsün
+  renderBasarimlar();
   const best = localStorage.getItem('demirTahtBestScore');
   const bestName = localStorage.getItem('demirTahtBestName');
   if (best && parseInt(best) > 0) {
@@ -4275,6 +4524,274 @@ window.onload = () => {
     if (el) el.textContent = `v4.0 · En İyi: ${parseInt(best).toLocaleString('tr-TR')} puan — ${bestName || ''}`;
   }
 };
+
+// ============================================================
+// BAŞARIMLAR SİSTEMİ
+// ============================================================
+const ACH_DEFS = {
+  // Zaman / Nesil
+  'survivor_20':   { icon: '🌱', title: 'Genç Fidan',          desc: '20 yıl tahtta kal.' },
+  'survivor_50':   { icon: '⏳', title: 'Yarım Asırlık Taht',  desc: '50 yıl boyunca tahttan inme.' },
+  'survivor_75':   { icon: '🌲', title: 'Derin Kökler',        desc: '75 yıl boyunca hüküm sür.' },
+  'survivor_100':  { icon: '🌳', title: 'Asırlık Çınar',       desc: '100 yıl hüküm sür.' },
+  'dynasty_3':     { icon: '👑', title: 'Kısa Hanedan',        desc: '3 nesil boyunca hanedanı ayakta tut.' },
+  'dynasty_5':     { icon: '🏛️', title: 'Köklü Hanedan',      desc: '5 nesil boyunca hanedanı ayakta tut.' },
+  'dynasty_8':     { icon: '🏰', title: 'Efsane Soy',          desc: '8 nesil boyunca hanedanı sürdür.' },
+
+  // Ekonomi / Hazine
+  'rich_king':     { icon: '💎', title: 'Midas\'ın Dokunuşu',  desc: 'Hazineyi 90\'ın üzerine çıkar.' },
+  'treasure_50':   { icon: '🪙', title: 'Dolu Sandık',         desc: 'Hazineyi ilk kez 50\'nin üzerine çıkar.' },
+  'treasure_100':  { icon: '💰', title: 'Altın Dağları',       desc: 'Hazineyi 100\'e vurdur (tehlikeli zenginlik).' },
+  'bankrupt':      { icon: '📉', title: 'İflas Çanı',          desc: 'Hazineyi ilk kez 10\'un altına düşür.' },
+  'early_glory':   { icon: '🔥', title: 'Erken İhtişam',       desc: 'İlk 20 yıl içinde hazineyi 80\'e çıkar.' },
+
+  // Halk / Ordu / Kilise / Soylu
+  'beloved_king':  { icon: '🤍', title: 'Halkın Kalbi',        desc: 'Halk memnuniyetini 90\'ın üzerine çıkar.' },
+  'iron_fist':     { icon: '🗡️', title: 'Demir Yumruk',       desc: 'Ordu gücünü 90\'ın üzerine çıkar.' },
+  'holy_crown':    { icon: '⛪', title: 'Kutsal Taç',          desc: 'Kilise etkisini 90\'ın üzerine çıkar.' },
+  'noble_web':     { icon: '🕸️', title: 'Soylu Ağları',       desc: 'Soylularla ilişkiyi 90\'ın üzerine çıkar.' },
+  'people_first':  { icon: '🤲', title: 'Önce Halk',           desc: 'Halk 80+ iken diğer tüm statlar 40+ olsun.' },
+  'iron_curtain':  { icon: '🛡️', title: 'Demir Perde',        desc: 'Ordu 80+ iken halk 30\'un altına düşsün.' },
+
+  // Felaket / Ölüm Senaryoları
+  'tyrant':        { icon: '🩸', title: 'Zalim',               desc: 'Halk isyanıyla tahttan indiril (Halk 0).' },
+  'holy_puppet':   { icon: '📿', title: 'Kukla Kral',          desc: 'Kilise çok güçlenerek seni gölgeye itsin (kilise_high ölümü).' },
+  'coup_victim':   { icon: '⚔️', title: 'Darbe Kurbanı',      desc: 'Ordu darbesiyle indirilen hükümdar ol (ordu_high ölümü).' },
+  'bankrupt_death':{ icon: '🥀', title: 'Borç Batağı',        desc: 'İflas sebebiyle hanedan çöküşü yaşa (hazine_low ölümü).' },
+
+  // Veba / Özel Olaylar
+  'plague_survivor': { icon: '🌿', title: 'Kara Ölüm Fatihi',  desc: 'Veba salgınını başarıyla atlat.' },
+  'plague_victim':   { icon: '☠️', title: 'Kara Ölüm Kurbanı',desc: 'Veba zincirinde başarısız olup ülkeyi felakete sürükle.' },
+
+  // Diplomasi / Komşular
+  'ally_master':   { icon: '🤝', title: 'İttifak Ustası',      desc: 'En az 2 komşu ile ilişkiyi 70\'in üzerine çıkar.' },
+  'war_monger':    { icon: '🔥', title: 'Savaş Kışkırtıcısı',  desc: 'Komşularla birden fazla gerilim/kavga zincirini tetikle.' },
+
+  // Projeler / Mega İnşaatlar / Envanter
+  'project_first': { icon: '🧱', title: 'İlk Tuğla',           desc: 'İlk mega projeyi başlat.' },
+  'project_master':{ icon: '🏗️', title: 'Usta Mimar',         desc: '3 farklı mega projeyi tamamla.' },
+  'relic_collector':{icon: '📜', title: 'Relik Avcısı',        desc: 'Envanterinde en az 5 özel eşya topla.' },
+  'armory_full':   { icon: '🗡️', title: 'Silahhane Dolu',     desc: 'Envanterinde 3+ savaş/ordu odaklı eşya olsun.' },
+
+  // Çocuklar / Veraset
+  'first_heir':    { icon: '🍼', title: 'İlk Veliaht',         desc: 'İlk çocuğunu kucağına al.' },
+  'big_family':    { icon: '👨‍👩‍👧‍👦', title: 'Kalabalık Saray', desc: 'En az 4 çocuk sahibi ol.' },
+  'no_heir':       { icon: '⚰️', title: 'Veliahtsız Taht',     desc: 'Tek bir çocuk bile olmadan öl.' },
+
+  // Skor / Final Skor
+  'score_1000':    { icon: '🎖️', title: 'Küçük Efsane',       desc: 'Final skorunu 1000\'in üzerine çıkar.' },
+  'score_2500':    { icon: '🏅', title: 'Büyük Efsane',        desc: 'Final skorunu 2500\'ün üzerine çıkar.' },
+  'score_4000':    { icon: '👑', title: 'Destansı Efsane',    desc: 'Final skorunu 4000\'ün üzerine çıkar.' },
+
+  // Tema / Trait odaklı
+  'trait_strategist':{icon:'♟️', title: 'Büyük Stratejist',   desc: 'Stratejist hükümdar olarak uzun süre hayatta kal.' },
+  'trait_diplomat': { icon:'🕊️', title: 'Usta Diplomat',      desc: 'Diplomat hükümdar olarak komşularla barışı koru.' },
+  'trait_cruel':    { icon:'💀', title: 'Zalim Ruh',           desc: 'Zalim/sert trait ile halkı uzun süre düşük tut.' },
+
+  // Tek Tur / Riskli Hamleler (basit kontrol ile)
+  'all_low':       { icon:'⚖️', title: 'Bıçak Sırtı',          desc: 'Tüm statlar aynı anda 25\'in altına insin.' },
+  'all_high':      { icon:'🌈', title: 'Altın Denge',          desc: 'Tüm statlar aynı anda 75\'in üzerine çıksın.' },
+
+  // Gizli / Eğlenceli
+  'first_game':    { icon:'🎲', title: 'İlk Taht Denemesi',    desc: 'İlk oyununla hanedanını kur.' },
+  'fast_death':    { icon:'💥', title: 'Hızlı Çöküş',          desc: '10 yıl dolmadan tahtı kaybet.' },
+  'age_70':        { icon:'🧓', title: 'Yaşlı Kurt',           desc: '70 yaşını görmüş bir hükümdar ol.' },
+  'age_80':        { icon:'🦴', title: 'Kemik Kral',           desc: '80 yaşına ulaş.' },
+
+  // Mevcut özel olanlar
+  'emperor':       { icon: '🌍', title: 'İmparatorluk',        desc: 'Krallığı İmparatorluğa dönüştür.' },
+  'veba_saved':    { icon: '💉', title: 'Umudun Işığı',        desc: 'Veba sonrası halkı tekrar 70\'in üzerine çıkar.' }
+};
+
+// Başarımları LocalStorage'da AYRI tutuyoruz ki save silinince gitmesin.
+let unlockedAchs = JSON.parse(localStorage.getItem('dtAchievements') || '[]');
+
+function checkAchievements() {
+  if (!G || !G.stats) return;
+
+  // Zaman / Nesil
+  if (G.totalYears >= 20)  unlockAch('survivor_20');
+  if (G.totalYears >= 50)  unlockAch('survivor_50');
+  if (G.totalYears >= 75)  unlockAch('survivor_75');
+  if (G.totalYears >= 100) unlockAch('survivor_100');
+  if (G.generation >= 3)   unlockAch('dynasty_3');
+  if (G.generation >= 5)   unlockAch('dynasty_5');
+  if (G.generation >= 8)   unlockAch('dynasty_8');
+
+  // Ekonomi / Hazine
+  if (G.stats.hazine >= 50) unlockAch('treasure_50');
+  if (G.stats.hazine >= 90) unlockAch('rich_king');
+  if (G.stats.hazine >= 100) unlockAch('treasure_100');
+  if (G.stats.hazine <= 10) unlockAch('bankrupt');
+  if (G.stats.hazine >= 80 && G.totalYears <= 20) unlockAch('early_glory');
+
+  // Halk / Ordu / Kilise / Soylu
+  if (G.stats.halk >= 90) unlockAch('beloved_king');
+  if (G.stats.ordu >= 90) unlockAch('iron_fist');
+  if (G.stats.kilise >= 90) unlockAch('holy_crown');
+  if (G.stats.soylu >= 90) unlockAch('noble_web');
+  if (G.stats.halk >= 80 &&
+      G.stats.hazine >= 40 &&
+      G.stats.ordu >= 40 &&
+      G.stats.kilise >= 40 &&
+      G.stats.soylu >= 40) unlockAch('people_first');
+  if (G.stats.ordu >= 80 && G.stats.halk <= 30) unlockAch('iron_curtain');
+
+  // Felaket / Ölüm Senaryoları (ölüm anında da tetiklenebilir ama burada eşiğe bakıyoruz)
+  if (G.stats.halk <= 0) unlockAch('tyrant');
+  if (G.stats.kilise >= 100) unlockAch('holy_puppet');
+  if (G.stats.ordu >= 100) unlockAch('coup_victim');
+  if (G.stats.hazine <= 0) unlockAch('bankrupt_death');
+
+  // Veba / Özel Olaylar
+  if (G.flags['veba_atlatildi']) unlockAch('plague_survivor');
+  if (G.flags['veba_felaket'])   unlockAch('plague_victim');
+
+  // Diplomasi / Komşular
+  if (G.neighbors) {
+    const relations = Object.values(G.neighbors).map(n => n.relation);
+    const highAllies = relations.filter(r => r >= 70).length;
+    const lowRelations = relations.filter(r => r <= 30).length;
+    if (highAllies >= 2) unlockAch('ally_master');
+    if (lowRelations >= 2) unlockAch('war_monger');
+  }
+
+  // Projeler / Mega İnşaatlar / Envanter
+  if (G.projects && G.projects.length > 0) unlockAch('project_first');
+  if (G.completedProjects && G.completedProjects >= 3) unlockAch('project_master');
+  if (G.inventory && G.inventory.length >= 5) unlockAch('relic_collector');
+  if (G.inventory && G.inventory.filter(it => it.buffKey === 'ordu').length >= 3) unlockAch('armory_full');
+
+  // Çocuklar / Veraset
+  if (G.flags['has_child']) unlockAch('first_heir');
+  if (G.children && G.children.length >= 4) unlockAch('big_family');
+  if (!G.flags['has_child'] && G.age >= 40) unlockAch('no_heir');
+
+  // Skor / Final skoruna hazırlık – burada yalnızca kaba eşikler
+  if (G.totalYears >= 40 && G.inventory && G.inventory.length >= 3) unlockAch('score_1000');
+  if (G.totalYears >= 80 && G.inventory && G.inventory.length >= 5) unlockAch('score_2500');
+
+  // Tema / Trait odaklı
+  if (G.rulerTrait === 'stratejist' && G.totalYears >= 40) unlockAch('trait_strategist');
+  if (G.rulerTrait === 'diplomat' && G.neighbors) unlockAch('trait_diplomat');
+  if (G.rulerTrait === 'zalim' && G.stats.halk <= 30 && G.totalYears >= 20) unlockAch('trait_cruel');
+
+  // Tek Tur / Riskli Denge
+  const allLow = STAT_KEYS.every(k => G.stats[k] <= 25);
+  const allHigh = STAT_KEYS.every(k => G.stats[k] >= 75);
+  if (allLow) unlockAch('all_low');
+  if (allHigh) unlockAch('all_high');
+
+  // Gizli / Eğlenceli
+  if (G.totalYears >= 1) unlockAch('first_game');
+  if (G.totalYears < 10 && G.age > 20 && G.silsile && G.silsile.length > 0) unlockAch('fast_death');
+  if (G.age >= 70) unlockAch('age_70');
+  if (G.age >= 80) unlockAch('age_80');
+  if (G.flags['veba_atlatildi'] && G.stats.halk >= 70) unlockAch('veba_saved');
+}
+
+function unlockAch(id) {
+  if (!unlockedAchs.includes(id)) {
+    unlockedAchs.push(id);
+    localStorage.setItem('dtAchievements', JSON.stringify(unlockedAchs));
+    const def = ACH_DEFS[id];
+    const count = unlockedAchs.length;
+
+    // Küçük toast bildirimi
+    showToast('🏆 Başarım Kazanıldı: ' + def.title);
+
+    // Büyük başa­rım overlay'i
+    try {
+      const ov = document.getElementById('ov-achievement');
+      if (ov) {
+        document.getElementById('ach-icon').textContent = def.icon || '🏆';
+        document.getElementById('ach-title').textContent = def.title || 'Başarım Kazanıldı';
+        document.getElementById('ach-desc').textContent = def.desc || '';
+        const counterEl = document.getElementById('ach-counter');
+        if (counterEl) {
+          const total = Object.keys(ACH_DEFS).length;
+          counterEl.textContent = `${count} / ${total} başarım tamamlandı.`;
+        }
+        ov.classList.add('active');
+      }
+    } catch(e) {}
+
+    renderBasarimlar(); // Paneli güncelle
+  }
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.style.cssText = "background:rgba(200,168,75,0.95); color:#1a0b0b; padding:12px 20px; border-radius:4px; font-family:'Cinzel',serif; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.5); border-left:4px solid var(--crimson); transition: opacity 0.3s;";
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = 0; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+function renderBasarimlar() {
+  const el = document.getElementById('basarimlar-icerik');
+  if (!el) return;
+  let html = '';
+  Object.keys(ACH_DEFS).forEach(k => {
+    const isUnlocked = unlockedAchs.includes(k);
+    const def = ACH_DEFS[k];
+    const op = isUnlocked ? '1' : '0.4';
+    const bg = isUnlocked ? 'rgba(200,168,75,0.1)' : 'rgba(0,0,0,0.2)';
+    const border = isUnlocked ? 'var(--gold)' : 'rgba(200,168,75,0.2)';
+    html += `
+      <div style="display:flex; align-items:center; gap:12px; padding:10px; background:${bg}; border:1px solid ${border}; border-radius:4px; opacity:${op};">
+        <div style="font-size:24px;">${isUnlocked ? def.icon : '🔒'}</div>
+        <div>
+          <div style="font-family:'Cinzel',serif; font-weight:bold; color:var(--gold); font-size:14px;">${def.title}</div>
+          <div style="font-size:12px; color:rgba(200,168,75,0.7);">${def.desc}</div>
+        </div>
+      </div>
+    `;
+  });
+  el.innerHTML = html;
+}
+
+// Bunu finishTurn fonksiyonunun EN ALTINA ekle!
+// function finishTurn() { ... checkAchievements(); }
+
+// ============================================================
+// TOP LIST (KÜRESEL SIRALAMA)
+// ============================================================
+// NOT: Bu bir Mock (Sahte) Veritabanıdır. İleride Firebase bağlayacağız.
+const MOCK_LEADERBOARD = [
+  { isim: 'Sultan Süleyman (Osmanoğlu)', skor: 4520, yil: 145 },
+  { isim: 'Kral Arthur (Pendragon)', skor: 3810, yil: 112 },
+  { isim: 'İmparator Jül (Sezar)', skor: 3105, yil: 98 },
+  { isim: 'Yüce Derebeyi Vlad', skor: 2450, yil: 64 },
+  { isim: 'Kraliçe Elizabeth', skor: 1980, yil: 45 }
+];
+
+function openTopList() {
+  toggleDevPanel('toplist');
+  const el = document.getElementById('toplist-rows');
+  let html = '';
+  MOCK_LEADERBOARD.forEach((p, index) => {
+    let renk = index === 0 ? '#e8c86a' : (index === 1 ? '#c0c0c0' : (index === 2 ? '#cd7f32' : 'var(--gold)'));
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(0,0,0,0.3); border-bottom:1px solid rgba(200,168,75,0.2);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="font-family:'Cinzel',serif; font-weight:bold; font-size:16px; color:${renk}; width:20px;">${index + 1}.</div>
+          <div>
+            <div style="font-family:'Cinzel',serif; font-size:13px; color:var(--parchment);">${p.isim}</div>
+            <div style="font-size:11px; color:var(--ink-muted); font-style:italic;">${p.yil} Yıl Hüküm Sürdü</div>
+          </div>
+        </div>
+        <div style="font-family:'Cinzel',serif; font-weight:bold; color:${renk};">${p.skor.toLocaleString('tr-TR')}</div>
+      </div>
+    `;
+  });
+  
+  html += `<button class="back-btn" style="width:100%; margin-top:10px;" onclick="alert('Global Sunucu (Firebase) bağlantısı eklendiğinde skorunuz buraya yansıyacaktır.')">SUNUCU BAĞLANTISI BEKLENİYOR...</button>`;
+  el.innerHTML = html;
+}
+
 </script>
 </body>
 </html>
