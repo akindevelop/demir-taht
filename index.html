@@ -1335,13 +1335,52 @@ body {
 
 <!-- ===== HAKKINDA ===== -->
 <div id="screen-about" class="screen">
-  <div class="panel-box">
+  <div class="panel-box" style="max-height: 90vh; overflow-y: auto;">
     <h2 class="panel-title">📖 HAKKINDA</h2>
-    <p class="about-text">Demir Taht, tek bir sayfada çalışan, tarayıcı tabanlı bir hanedan yönetim oyunudur. Kararlarınla hanedanının kaderini şekillendir, varislerin tarihe geçsin.</p>
-    <p class="about-text">Zincirli olaylar, dinamik veraset sistemi ve genişleyen olay havuzuyla her oyun farklı bir destan yazar.</p>
-    <p class="about-text" style="color:var(--crimson-light)">Sürüm 4.0 · Beta aşamasındadır.</p>
-    <button class="donate-btn" onclick="openDonate()">🪙 GELİŞTİRİCİYİ DESTEKLE</button>
-    <button class="back-btn" style="width:100%;margin-top:8px" onclick="showScreen('intro')">← GERİ DÖN</button>
+
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-family:'Cinzel',serif; color:var(--crimson); font-size:16px; margin-bottom:8px;">Oyun Hakkında</h3>
+      <p class="about-text" style="font-size:14px; margin-bottom:0;">Demir Taht, tarayıcı üzerinde çalışan, acımasız seçimlere dayalı bir Orta Çağ hanedanlık simülasyonudur. Aldığınız her karar krallığın dengelerini sarsar. Varisler yetiştirin, krizleri çözün ve adınızı tarihe kazıyın.</p>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <h3 style="font-family:'Cinzel',serif; color:var(--crimson); font-size:16px; margin-bottom:10px;">Özellikler</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">📜 130+ Dinamik Olay</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">👑 Veraset Sistemi</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🏗️ Mega Projeler</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🎒 Pasif Envanter</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🎲 Zar Mekaniği</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🌍 Komşu Krallıklar</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🎵 Web Audio Müzik</div>
+        <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--parchment-deep); padding: 8px; font-size: 13px; border-radius: 3px; color:var(--ink);">🏰 3 Farklı Tema</div>
+      </div>
+    </div>
+
+    <div style="background: rgba(200,168,75,0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+      <h3 style="font-family:'Cinzel',serif; color:var(--crimson); font-size:16px; margin-bottom:12px;">Geliştirici</h3>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+        <div style="font-size: 36px; background:var(--parchment); border:1px solid var(--gold); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center;">👨‍💻</div>
+        <div>
+          <div style="font-family:'Cinzel',serif; font-weight: bold; font-size:15px; color:var(--ink);">diskiriminiant (Akın)</div>
+          <div style="font-size: 12px; font-style: italic; color:var(--ink-muted);">Bağımsız Oyun Geliştiricisi</div>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--ink-light); line-height:1.5; margin-bottom:12px;">Demir Taht evrenini tek başıma kodluyor ve tasarlıyorum. Metin odaklı, zorlayıcı ve karanlık atmosferli simülasyonları seviyorum.</p>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <a href="https://twitter.com/diskiriminiant" target="_blank" style="flex:1; text-align:center; text-decoration:none; background: var(--bg); color: var(--gold); border: 1px solid var(--gold); padding: 8px; font-size: 12px; font-family:'Cinzel',serif; border-radius: 3px; transition:0.2s;">𝕏 Twitter</a>
+        <a href="https://instagram.com/1940akin" target="_blank" style="flex:1; text-align:center; text-decoration:none; background: var(--bg); color: var(--gold); border: 1px solid var(--gold); padding: 8px; font-size: 12px; font-family:'Cinzel',serif; border-radius: 3px; transition:0.2s;">📷 Instagram</a>
+        <a href="mailto:tcumhuriyeti140@gmail.com" style="flex:1; text-align:center; text-decoration:none; background: var(--crimson); color: var(--parchment); border: 1px solid var(--crimson-dark); padding: 8px; font-size: 12px; font-family:'Cinzel',serif; border-radius: 3px; transition:0.2s;">✉ Mail</a>
+      </div>
+    </div>
+
+    <div style="text-align: center; border-top: 1px solid var(--parchment-deep); padding-top: 15px; font-size: 12px; color: var(--ink-muted);">
+      <div style="font-family:'Cinzel',serif; font-weight:bold; color:var(--ink); margin-bottom:4px;">Demir Taht v5.0 Beta</div>
+      <div style="margin-bottom: 4px;">© 2024 Tüm hakları saklıdır.</div>
+      <div>🔗 <a href="https://akindevelop.github.io/demir-taht/" target="_blank" style="color:var(--gold); text-decoration:none;">akindevelop.github.io/demir-taht/</a></div>
+    </div>
+
+    <button class="back-btn" style="width:100%;margin-top:15px" onclick="showScreen('intro')">← GERİ DÖN</button>
   </div>
 </div>
 
@@ -4138,9 +4177,9 @@ function closeAllPopups() {
   document.querySelectorAll('.social-popup').forEach(p => p.classList.remove('open'));
 }
 
-// Dışarı tıklayınca kapat
+// Dışarı tıklayınca kapat (DÜZELTİLDİ)
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.social-popup') && !e.target.closest('.social-btn')) {
+  if (!e.target.closest('.social-popup') && !e.target.closest('.left-btn')) {
     closeAllPopups();
   }
 });
