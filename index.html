@@ -1259,56 +1259,6 @@ body {
   </div>
 </div>
 
-<!-- Twitter Pop-up -->
-<div class="social-popup" id="popup-twitter">
-  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
-  <div class="social-popup-header">
-    <div class="social-popup-avatar">𝕏</div>
-    <div>
-      <div class="social-popup-name">diskiriminiant</div>
-      <div class="social-popup-handle">@diskiriminiant</div>
-    </div>
-  </div>
-  <div class="social-popup-desc">Demir Taht geliştiricisi. Oyun geliştirme, tarih ve teknoloji üzerine yazıyor.</div>
-  <a class="social-popup-link" href="https://twitter.com/diskiriminiant" target="_blank">PROFİLE GİT →</a>
-</div>
-
-<!-- Instagram Pop-up -->
-<div class="social-popup" id="popup-instagram">
-  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
-  <div class="social-popup-header">
-    <div class="social-popup-avatar">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(200,168,75,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <circle cx="12" cy="12" r="4"/>
-        <circle cx="17.5" cy="6.5" r="1" fill="rgba(200,168,75,0.8)" stroke="none"/>
-      </svg>
-    </div>
-    <div>
-      <div class="social-popup-name">1940akin</div>
-      <div class="social-popup-handle">@1940akin</div>
-    </div>
-  </div>
-  <div class="social-popup-desc">Demir Taht geliştiricisi. Oyun arkası içerikler ve günlük paylaşımlar.</div>
-  <a class="social-popup-link" href="https://instagram.com/1940akin" target="_blank">PROFİLE GİT →</a>
-</div>
-
-<!-- Mail Pop-up -->
-<div class="social-popup" id="popup-mail">
-  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
-  <div class="social-popup-header">
-    <div class="social-popup-avatar">✉</div>
-    <div>
-      <div class="social-popup-name">İletişim</div>
-      <div class="social-popup-handle">tcumhuriyeti140@gmail.com</div>
-    </div>
-  </div>
-  <div class="social-popup-desc">Öneri, geri bildirim veya iş birliği için mail atabilirsin.</div>
-  <a class="social-popup-link" href="mailto:tcumhuriyeti140@gmail.com">MAIL GÖNDER →</a>
-</div>
-<p class="intro-version" id="best-score-display">v4.0 · BETA</p>
-</div>
-
 <!-- ===== AYARLAR ===== -->
 <div id="screen-settings" class="screen">
   <div class="panel-box">
@@ -4140,7 +4090,7 @@ function closeAllPopups() {
 
 // Dışarı tıklayınca kapat
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.social-popup') && !e.target.closest('.social-btn')) {
+  if (!e.target.closest('.social-popup') && !e.target.closest('.left-btn') && !e.target.closest('.dev-panel')) {
     closeAllPopups();
   }
 });
@@ -4237,5 +4187,56 @@ window.onload = () => {
   }
 };
 </script>
+<!-- Twitter Pop-up -->
+<div class="social-popup" id="popup-twitter">
+  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
+  <div class="social-popup-header">
+    <div class="social-popup-avatar">𝕏</div>
+    <div>
+      <div class="social-popup-name">diskiriminiant</div>
+      <div class="social-popup-handle">@diskiriminiant</div>
+    </div>
+  </div>
+  <div class="social-popup-desc">Demir Taht geliştiricisi. Oyun geliştirme, tarih ve teknoloji üzerine yazıyor.</div>
+  <a class="social-popup-link" href="https://twitter.com/diskiriminiant" target="_blank">PROFİLE GİT →</a>
+</div>
+
+<!-- Instagram Pop-up -->
+<div class="social-popup" id="popup-instagram">
+  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
+  <div class="social-popup-header">
+    <div class="social-popup-avatar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(200,168,75,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="rgba(200,168,75,0.8)" stroke="none"/>
+      </svg>
+    </div>
+    <div>
+      <div class="social-popup-name">1940akin</div>
+      <div class="social-popup-handle">@1940akin</div>
+    </div>
+  </div>
+  <div class="social-popup-desc">Demir Taht geliştiricisi. Oyun arkası içerikler ve günlük paylaşımlar.</div>
+  <a class="social-popup-link" href="https://instagram.com/1940akin" target="_blank">PROFİLE GİT →</a>
+</div>
+
+<!-- Mail Pop-up -->
+<div class="social-popup" id="popup-mail">
+  <button class="social-popup-close" onclick="closeAllPopups()">✕</button>
+  <div class="social-popup-header">
+    <div class="social-popup-avatar">✉</div>
+    <div>
+      <div class="social-popup-name">İletişim</div>
+      <div class="social-popup-handle">tcumhuriyeti140@gmail.com</div>
+    </div>
+  </div>
+  <div class="social-popup-desc">Öneri, geri bildirim veya iş birliği için mail atabilirsin.</div>
+  <a class="social-popup-link" href="mailto:tcumhuriyeti140@gmail.com">MAIL GÖNDER →</a>
+</div>
+<p class="intro-version" id="best-score-display">v4.0 · BETA</p>
+</div>
+
+
 </body>
 </html>
