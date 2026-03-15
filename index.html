@@ -853,6 +853,60 @@ body {
   font-size: 14px; cursor: pointer;
 }
 .social-popup-close:hover { color: var(--gold); }
+
+/* ========== KRALLİK HARİTASI ========== */
+#harita-panel {
+  position: absolute;
+  bottom: 70px;
+  right: 16px;
+  width: 130px;
+  background: rgba(10,4,2,0.92);
+  border: 1px solid rgba(200,168,75,0.3);
+  padding: 8px;
+  z-index: 10;
+  display: none;
+}
+#harita-panel.visible { display: block; }
+#harita-panel h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  color: rgba(200,168,75,0.5);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+#harita-svg { width: 100%; height: auto; display: block; }
+#harita-toggle {
+  position: absolute;
+  bottom: 70px;
+  right: 16px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,168,75,0.35);
+  background: rgba(13,6,4,0.85);
+  color: rgba(200,168,75,0.7);
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s;
+  z-index: 11;
+}
+#harita-toggle.visible { display: flex; }
+#harita-toggle:hover { border-color: var(--gold); color: var(--gold-bright); }
+.harita-toprak {
+  transition: fill 0.5s ease;
+  cursor: pointer;
+}
+.harita-toprak:hover { filter: brightness(1.3); }
+.harita-etiket {
+  font-family: 'Cinzel', serif;
+  font-size: 5px;
+  fill: rgba(255,255,255,0.6);
+  pointer-events: none;
+  text-anchor: middle;
+}
 </style>
 </head>
 <body>
@@ -1020,6 +1074,16 @@ body {
           <option value="brutal">Vahşi — Statlar 30</option>
         </select>
       </div>
+      <div class="form-section">
+        <label class="form-label">OYUN TEMASİ</label>
+        <select id="inp-tema" class="form-select form-input" onchange="onTemaPreview(this.value)">
+          <option value="ortacag">🏰 Ortaçağ Avrupası</option>
+          <option value="osmanli">☪️ Osmanlı İmparatorluğu</option>
+          <option value="bizans">⚜️ Bizans İmparatorluğu</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
       <div class="form-section">
         <label class="form-label">HÜKÜMDARİN KİŞİLİĞİ</label>
         <select id="inp-trait" class="form-select form-input">
@@ -1196,6 +1260,77 @@ function loadSettings() {
   document.getElementById('toggle-hard').classList.toggle('on', settings.hard);
 }
 
+
+
+// ============================================================
+// TEMA SİSTEMİ
+// ============================================================
+const TEMALAR = {
+  ortacag: {
+    isim: 'Ortaçağ Avrupası',
+    ikon: '🏰',
+    renkler: {
+      bg: '#0d0604',
+      parchment: '#f2e4c4',
+      crimson: '#7a0e0e',
+      gold: '#c8a84b',
+    },
+    unvanlar: ['Kral', 'Kraliçe', 'İmparator', 'Derebeyi'],
+    danismanlar: { hazine: '💰 Hazinedar', halk: '🌾 Lonca Başı', ordu: '⚔️ Başkomutan', kilise: '✝️ Piskopos', soylu: '🏰 Lord' },
+    stat_isimleri: { hazine: 'Hazine', halk: 'Halk', ordu: 'Ordu', kilise: 'Kilise', soylu: 'Soylu' },
+    stat_ikonlari: { hazine: '💰', halk: '🌾', ordu: '⚔️', kilise: '✝️', soylu: '🏰' },
+  },
+  osmanli: {
+    isim: 'Osmanlı İmparatorluğu',
+    ikon: '☪️',
+    renkler: {
+      bg: '#050a0d',
+      parchment: '#f0e8d0',
+      crimson: '#1a4a2a',
+      gold: '#d4a84b',
+    },
+    unvanlar: ['Sultan', 'Padişah', 'Han', 'Bey'],
+    danismanlar: { hazine: '💰 Defterdar', halk: '🌾 Kadı', ordu: '⚔️ Vezir-i Azam', kilise: '☪️ Şeyhülislam', soylu: '🏛️ Paşa' },
+    stat_isimleri: { hazine: 'Hazine', halk: 'Reaya', ordu: 'Ordu', kilise: 'Din', soylu: 'Paşalar' },
+    stat_ikonlari: { hazine: '💰', halk: '🌾', ordu: '⚔️', kilise: '☪️', soylu: '🏛️' },
+  },
+  bizans: {
+    isim: 'Bizans İmparatorluğu',
+    ikon: '⚜️',
+    renkler: {
+      bg: '#080510',
+      parchment: '#ede4d0',
+      crimson: '#4a0a5a',
+      gold: '#c8a84b',
+    },
+    unvanlar: ['İmparator', 'Basileus', 'Augustus', 'Despotes'],
+    danismanlar: { hazine: '💰 Logothetes', halk: '🌾 Eparch', ordu: '⚔️ Domestikos', kilise: '✞ Patrik', soylu: '🏛️ Sebastokrator' },
+    stat_isimleri: { hazine: 'Hazine', halk: 'Halk', ordu: 'Tagmata', kilise: 'Kilise', soylu: 'Aristokrasi' },
+    stat_ikonlari: { hazine: '💰', halk: '🌾', ordu: '⚔️', kilise: '✞', soylu: '🏛️' },
+  },
+};
+
+function applyTema(temaId) {
+  const tema = TEMALAR[temaId];
+  if (!tema) return;
+  G.tema = temaId;
+
+  // CSS değişkenlerini güncelle
+  const root = document.documentElement;
+  root.style.setProperty('--crimson', tema.renkler.crimson);
+  root.style.setProperty('--gold', tema.renkler.gold);
+  root.style.setProperty('--bg', tema.renkler.bg);
+
+  // Stat isimlerini güncelle
+  const statNames = tema.stat_isimleri;
+  const statIcons = tema.stat_ikonlari;
+  ['hazine','halk','ordu','kilise','soylu'].forEach(k => {
+    const nameEl = document.querySelector(`#bar-${k}`)?.closest('.stat-col')?.querySelector('.stat-name');
+    const iconEl = document.querySelector(`#bar-${k}`)?.closest('.stat-col')?.querySelector('.stat-emoji');
+    if (nameEl) nameEl.textContent = statNames[k];
+    if (iconEl) iconEl.textContent = statIcons[k];
+  });
+}
 
 
 // ============================================================
@@ -1812,6 +1947,8 @@ function startNewGame() {
 
   const traitSel = document.getElementById('inp-trait');
   const selectedTrait = traitSel ? traitSel.value : 'adil';
+  const temaSel = document.getElementById('inp-tema');
+  const selectedTema = temaSel ? temaSel.value : 'ortacag';
 
   G = {
     dynasty: document.getElementById('inp-dynasty').value || 'İsimsiz',
@@ -1832,9 +1969,11 @@ function startNewGame() {
     chainQueue: [],
     history: [],
     rulerTrait: selectedTrait,
+    tema: selectedTema,
     neighbors: {}
   };
   initNeighbors();
+  setTimeout(() => applyTema(selectedTema), 100);
 
   eventPool = shuffled([...ALL_EVENTS_COMBINED]);
   showScreen('game');
@@ -1855,6 +1994,8 @@ function loadGame() {
   if (!G.children) G.children = [];
   if (!G.neighbors) { initNeighbors(); }
   if (!G.rulerTrait) G.rulerTrait = 'adil';
+  if (!G.tema) G.tema = 'ortacag';
+  setTimeout(() => applyTema(G.tema), 100);
   eventPool = shuffled([...ALL_EVENTS_COMBINED]);
   showScreen('game');
   updateUI();
@@ -2102,6 +2243,7 @@ function finishTurn(choice) {
 
   updateNeighborUI();
   updateHudScore();
+  updateHarita();
 
   if (!checkDeath()) {
     if (!checkSuccession()) {
@@ -3194,8 +3336,406 @@ const EXTRA_EVENTS = [
 ]; // EXTRA_EVENTS sonu
 
 
+// ============================================================
+// YENİ OLAY PAKETİ — 100+ ek olay
+// ============================================================
+const OLAY_PAKETI_2 = [
+
+  // ══ OSMANLI / TÜRK TEMALI ══
+  {
+    id: 'divan_toplantisi', icon: '📜', tag: 'DİVAN',
+    title: 'Divan-ı Hümayun',
+    desc: 'Divan-ı Hümayun bugün sabahın erken saatlerinde toplandı. Vezirler, kadılar ve defterdar huzuruna çıktı. Gündem ağırdı: Doğu sınırında aşiret hareketleri, batıda vergi borçları ve güneyde deniz saldırıları. Vezir-i Azam Köprülü, tüm meseleleri tek tek sıraladı ve seslendi: "Yüce Padişahım, bu üç meseleden hangisi önce halledilmeli?"',
+    choices: [
+      { text: '🗡️ Doğu sınırı önce. Aşiretler ezilmeli.', effects: { ordu: 20, halk: -10 }, chain: 'asiret_harekati' },
+      { text: '💰 Vergi borçları. Hazine boşalıyor.', effects: { hazine: 25, halk: -15 } },
+      { text: '⚓ Deniz meselesi. Akdeniz bizim olmalı.', effects: { ordu: 15, hazine: -15 }, setFlag: 'deniz_politikasi' }
+    ]
+  },
+  {
+    id: 'asiret_harekati', icon: '🏹', tag: 'ZİNCİR',
+    title: 'Bozkırın Sesi',
+    desc: 'Doğu sınırındaki Karakoyunlu aşireti topraklarından geçiş hakkı talep ediyor ve bunu reddeden köyleri basıyor. Ordu komutanı Yıldırım Bey "iki haftada bitiririm" diyor. Ama kadı "bu aşiretle yüz yıllık antlaşmamız var" diye hatırlattı.',
+    choices: [
+      { text: '⚔️ Antlaşmayı feshettir. Orduyu gönder.', probability: 0.65,
+        successEffects: { ordu: 15, halk: 10 }, failEffects: { ordu: -20, halk: -15 },
+        successText: 'Aşiret dağıtıldı. Sınır hattı güvende.',
+        failText: 'Aşiret beklenenden güçlü çıktı. Çekilmek zorunda kaldık.' },
+      { text: '🤝 Kadının dediği doğru. Müzakere et.', effects: { halk: 15, ordu: -5 } }
+    ]
+  },
+  {
+    id: 'yeni_ceri_isyani', icon: '🪖', tag: 'KRİZ',
+    title: 'Ocağın Ateşi',
+    desc: 'Yeniçeri ocağından kaygı verici haberler geldi. Üç aydır maaş alamayan askerler kışlada kazan kaldırdı — bu sembolik eylem, tarihte pek çok padişahın sonunu hazırlamıştı. Ocak ağası Hasan Paşa geldi: "Sultanım, kışla meydanında kazanlar devrildi. Bu son uyarı."',
+    choices: [
+      { text: '💰 Maaşları derhal öde. Ocağı yatıştır.', effects: { hazine: -30, ordu: 20 } },
+      { text: '⚔️ İsyancı askerleri cezalandır. Otorite sarsılmasın.',
+        probability: 0.50,
+        successEffects: { ordu: 10, soylu: 15 }, failEffects: { ordu: -35, halk: -20 },
+        successText: 'Elebaşılar idam edildi. Ocak sustu. Ama derin bir kırgınlık var.',
+        failText: 'Yeniçeriler saraya yürüdü. Büyük kaos...' },
+      { text: '🤝 Ocak ağasıyla gizlice müzakere et.', effects: { hazine: -15, ordu: 15 } }
+    ]
+  },
+  {
+    id: 'ulema_fetva', icon: '📿', tag: 'DİN',
+    title: 'Fetva Meselesi',
+    desc: 'Şeyhülislam Ebussuud Efendi, huzuruna çıktı. Elinde bir fetva taslağı vardı — yeni çıkarmak istediğin kanunun "şeriata aykırı" olduğunu ilan edecekti. "Sultanım," dedi alçakgönüllülükle ama gözlerinde kararlılık vardı, "bu kanun çıkarsa fetva çıkaracağım." Bu bir tehdit değil, bir uyarıydı.',
+    choices: [
+      { text: '📜 Kanunu geri çek. Din otoritesiyle çatışma.', effects: { kilise: 25, halk: 5, soylu: -10 } },
+      { text: '💪 Sultanın kararı fetvadan üstündür. Kanun çıksın.', effects: { kilise: -35, ordu: 10, halk: 15 }, setFlag: 'ulema_gerginligi' },
+      { text: '🤝 Şeyhülislamla özel görüş. Ortak metin bul.', effects: { kilise: 10, halk: 5 } }
+    ]
+  },
+  {
+    id: 'devshirme', icon: '👦', tag: 'OSMANLI',
+    title: 'Devşirme Zamanı',
+    desc: 'Her beş yılda bir uygulanan devşirme sistemi yeniden başladı. Hristiyan ailelerden seçilen çocuklar saraya alınacak, yetiştirilecek ve devletin en güçlü adamları olacaktı. Ama bu yıl Balkan valisi şikâyete geldi: "Aileler kaçıyor, çocukları saklıyor. Halk direniyor."',
+    choices: [
+      { text: '⚔️ Sistemi zorla uygula. Devlet ihtiyacı var.', effects: { ordu: 20, halk: -20, kilise: -10 } },
+      { text: '🤝 Gönüllü sisteme geç. Maaş vaadi yap.', effects: { ordu: 10, hazine: -15, halk: 5 } },
+      { text: '📜 Bu yıl erteله. Halkı dinle.', effects: { halk: 15, ordu: -10 } }
+    ]
+  },
+  {
+    id: 'kapitulasyon', icon: '🚢', tag: 'DİPLOMASİ',
+    title: 'Kapitülasyon Teklifi',
+    desc: 'Venedik elçisi Grimani, muhteşem bir hediye yükünün eşliğinde geldi. Teklife göre Venedikli tüccarlara imparatorluk topraklarında özel ticaret hakları ve düşük vergi tanınacak. Karşılığında büyük miktarda altın ve stratejik ittifak teklif ediyorlardı. Defterdar "kısa vadede iyi" dedi, ama Vezir "uzun vadede tehlikeli" diye ekledi.',
+    choices: [
+      { text: '✒️ İmzala. Hazine dolsun.', effects: { hazine: 35, soylu: -15 }, setFlag: 'kapitulasyon_verildi' },
+      { text: '🔍 Sınırlı koşullarla kabul et.', effects: { hazine: 15, soylu: -5 } },
+      { text: '🚪 Reddet. Egemenlik satılmaz.', effects: { soylu: 15, kilise: 10, hazine: -5 } }
+    ]
+  },
+  {
+    id: 'hamam_vakfi', icon: '🏛️', tag: 'OSMANLI',
+    title: 'Vakıf Tesisi',
+    desc: 'Baş Mimarın sunduğu proje muhteşemdi: Bir külliye — cami, medrese, hamam, imaret ve kervansaray bir arada. Şehrin tam kalbinde yükselecek ve sultanın adını sonsuza taşıyacaktı. "Bu külliye bittiğinde," dedi mimar, "adınız taşa kazınmış olacak."',
+    choices: [
+      { text: '🕌 Külliyeyi inşa et. (12 Yıl · Her yıl -2 Hazine, -2 Halk)',
+        project: { id: 'kulliye_proj', name: 'Sultan Külliyesi', timeLeft: 12, totalDuration: 12,
+          cost: { hazine: -2, halk: -2 },
+          rewardItem: { icon: '🕌', name: 'Sultan Külliyesi', buffKey: 'kilise', buffVal: 4 } }
+      },
+      { text: '🕌 Sadece cami inşa et. Daha ucuz.', effects: { kilise: 15, hazine: -12 } },
+      { text: '💰 Şimdilik değil. Hazine müsait değil.', effects: { kilise: -10, hazine: 8 } }
+    ]
+  },
+  {
+    id: 'deniz_seferi', icon: '⚓', tag: 'SAVAS',
+    title: 'Akdeniz\'in Efendisi',
+    requires: { flag: 'deniz_politikasi' },
+    desc: 'Kaptan Paşa Barbaros, devasa bir donanmayla Akdeniz\'e açılmak için izin istedi. "Sultanım, denizler bizim olmalı. Cenevizliler ve Venedikliler bu suları sanki kendi gölü gibi kullanıyor. Bir büyük zafer yeter." Hazinedar ise "donanma masraflı" dedi.',
+    choices: [
+      { text: '⚓ Sefere izin ver. Akdeniz fethedelim.',
+        probability: 0.65,
+        successEffects: { ordu: 25, hazine: 20, halk: 15 },
+        failEffects: { ordu: -30, hazine: -25 },
+        successText: 'Büyük deniz zaferi! Akdeniz\'de hakimiyet kuruldu.',
+        failText: 'Fırtına ve düşman baskısı. Donanma ağır kayıp verdi.' },
+      { text: '🛡️ Savunma stratejisi. Limanlara kapan kur.', effects: { ordu: 10, hazine: -10 } }
+    ]
+  },
+
+  // ══ BİZANS TEMALI ══
+  {
+    id: 'tagmata_isyani', icon: '🛡️', tag: 'BİZANS',
+    title: 'Tagmata\'nın Şikâyeti',
+    desc: 'İmparatorluk tagmatasının en seçkin birliği olan Varangian muhafızlar, huzuruna çıktı. Liderleri Erik, derin bir eğilişin ardından konuştu: "Basileus, aylardır söz verilen ganimetin paylaşılmadığını bildirmek zorundayız. Adamlarım şikâyetçi." Bu kibarca söylenmiş ama ağır bir uyarıydı.',
+    choices: [
+      { text: '💰 Ganimeti hemen dağıt. Muhafızlar memnun olsun.', effects: { hazine: -25, ordu: 25 } },
+      { text: '📜 Anlaşmayı yeniden müzakere et.', effects: { ordu: 10, hazine: -10 } },
+      { text: '🤝 Erik\'i özel kabul et. Kişisel söz ver.', effects: { ordu: 15 } }
+    ]
+  },
+  {
+    id: 'patrik_gerginlik', icon: '✞', tag: 'BİZANS',
+    title: 'İki Başlı Kartal',
+    desc: 'Konstantinopolis Patriği Gregorios, sarayın kapısına dayandı. Roma ile birleşme meselesini gündeme taşıyordu. "Basileus, Papa ile anlaşırsak Batı\'nın yardımını alabiliriz. Ama bu Ortodoks inancından taviz demek." Halk meydanlarda "Roma ile birleşme!" diye bağırıyordu.',
+    choices: [
+      { text: '✞ Patriği destekle. Ortodoksluk taviz vermez.', effects: { kilise: 30, halk: 20, soylu: -10 }, setFlag: 'ortodoks_direnis' },
+      { text: '🤝 Roma ile müzakere. Batı yardımı lazım.', effects: { kilise: -30, ordu: 15, halk: -25 } },
+      { text: '⏳ Karar ver. Şimdilik her iki tarafı da idare et.', effects: { kilise: -5, halk: -5 } }
+    ]
+  },
+  {
+    id: 'hipodrom_yarisi', icon: '🐎', tag: 'BİZANS',
+    title: 'Hipodrom Partileri',
+    desc: 'Konstantinopolis Hipodromu\'nda Maviler ile Yeşiller arasındaki gerilim tehlikeli bir noktaya ulaştı. Dün gece iki tarafın taraftarları arasında çıkan kavgada on kişi öldü. Tarihte Nika İsyanı\'nın da böyle başladığını herkes biliyordu.',
+    choices: [
+      { text: '🚔 Hipodromu geçici kapat. Güvenlik önce.', effects: { halk: -20, soylu: 10 } },
+      { text: '🎭 Büyük bir yarış düzenle. Halkın dikkatini dağıt.', effects: { halk: 15, hazine: -15 } },
+      { text: '⚖️ Kavga liderlerini yargıla. Adalet göster.', effects: { halk: 10, kilise: 5 } },
+      { text: '💪 Mavileri destekle. Siyasi tercihini belli et.', effects: { halk: -15, soylu: 20 } }
+    ]
+  },
+  {
+    id: 'surlar_onarimi', icon: '🧱', tag: 'BİZANS',
+    title: 'Teodosius Surları',
+    desc: 'Surların doğu bölümünde bir heyelan büyük bir gedik açtı. Başmühendis Konstantinos, "bu surlar bin yıldır şehri korudu ama artık onarım şart" dedi. Maliyet büyük ama alternatif yok — bu surlar olmadan şehir savunmasız kalırdı.',
+    choices: [
+      { text: '🧱 Hemen onar. Surlar her şeyden önce gelir. (8 Yıl · Her yıl -2 Hazine)',
+        project: { id: 'sur_onarim', name: 'Teodosius Surları', timeLeft: 8, totalDuration: 8,
+          cost: { hazine: -2 },
+          rewardItem: { icon: '🧱', name: 'Restore Surlar', buffKey: 'ordu', buffVal: 3 } }
+      },
+      { text: '🪖 Geçici tahkimat yap. Tam onarım beklesin.', effects: { hazine: -10, ordu: 5 } },
+      { text: '😔 Hazine yok. Sonraya bırak.', effects: { ordu: -15 } }
+    ]
+  },
+
+  // ══ GENEL ORTAÇAĞ ══
+  {
+    id: 'kole_pazari', icon: '⛓️', tag: 'TOPLUM',
+    title: 'Pazar Meydanı',
+    desc: 'Şehrin ana meydanında kurulan köle pazarı, başkentteki en büyük gelir kaynaklarından biriydi. Ama bu hafta bir din adamı meydan ortasında vaaz vermeye başladı: "Her insan Tanrı\'nın eseridir. Bu pazar günahtır." Kalabalık büyüdü. Tüccarlar kızgın bakıyor.',
+    choices: [
+      { text: '✝️ Din adamını destekle. Pazarı kapat.', effects: { kilise: 30, halk: 20, hazine: -20 }, setFlag: 'kole_pazari_kapatildi' },
+      { text: '💰 Pazar ekonominin temelidir. Devam etsin.', effects: { hazine: 20, kilise: -25, halk: -15 } },
+      { text: '⚖️ Pazarı düzenle. Koşulları insanileştir.', effects: { kilise: 10, hazine: 5, halk: 5 } }
+    ]
+  },
+  {
+    id: 'hac_yolu', icon: '✞', tag: 'DİN',
+    title: 'Kutsal Yol',
+    desc: 'Baş Piskopos, Kutsal Topraklar\'a hac yolunu açık tutmak için yardım istedi. Yollar tehlikeliydi — haydutlar, hastalık ve düşman geçişleri hacıları yolda öldürüyordu. "Eğer bu yolu güvence altına alırsanız," dedi Piskopos, "tüm Hristiyan dünyası size dua edecek."',
+    choices: [
+      { text: '🛡️ Hac yoluna sürekli asker konuşlandır.', effects: { hazine: -20, kilise: 25, ordu: -5 }, setFlag: 'hac_yolu_korunan' },
+      { text: '⚔️ Haydutları temizlemek için sefer düzenle.', probability: 0.65,
+        successEffects: { kilise: 20, ordu: 15 }, failEffects: { ordu: -15, kilise: -5 },
+        successText: 'Haydutlar temizlendi. Hac yolu güvende.', failText: 'Sefer başarısız. Haydutlar dağlara çekildi.' },
+      { text: '📜 Bu bizim sorunumuz değil. Kilise kendi çözsün.', effects: { kilise: -20, halk: -10 } }
+    ]
+  },
+  {
+    id: 'cadi_avi', icon: '🔥', tag: 'KÜLTÜR',
+    title: 'Gece Ateşleri',
+    desc: 'Kuzey köylerinde hastalıklar başladı ve insanlar nedeni arıyordu. Buldukları cevap: "Cadılar." İnsanlar komşularını, yaşlı kadınları, münzevi tipleri suçlamaya başladı. Kilise bu "cadı avı"nı destekledi. Ama şehir hekimi Brennus geldi: "Bu hastalık doğal kökenli. Cadı yok."',
+    choices: [
+      { text: '🔥 Kiliseyi destekle. Cadı avına izin ver.', effects: { kilise: 25, halk: -20 } },
+      { text: '🔬 Hekimi destekle. Bilimsel araştırma yap.', effects: { kilise: -20, halk: 10 }, setFlag: 'bilim_destegi' },
+      { text: '⚖️ Sadece resmi mahkeme. Linç yok.', effects: { kilise: 5, halk: -5 } }
+    ]
+  },
+  {
+    id: 'kervansaray', icon: '🐪', tag: 'EKONOMİ',
+    title: 'İpek Yolu Kavşağı',
+    desc: 'İmparatorluğun tam ortasında büyük bir ticaret kavşağı kurulabilirdi — kervansaray, han, çarşı. Doğudan batıya geçen tüm kervanlar burada mola verirdi. Tüccar Al-Rashid projeyi teklif etti: "Bir kervansaray krallığı dünyanın merkezi yapar."',
+    choices: [
+      { text: '🏗️ Kervansarayı inşa et. (8 Yıl · Her yıl -2 Hazine)',
+        project: { id: 'kervansaray_proj', name: 'Büyük Kervansaray', timeLeft: 8, totalDuration: 8,
+          cost: { hazine: -2 },
+          rewardItem: { icon: '🐪', name: 'Ticaret Merkezi', buffKey: 'hazine', buffVal: 5 } }
+      },
+      { text: '💰 Tüccar kendi parasıyla yapsın.', effects: { hazine: 10, halk: -5 } },
+      { text: '🤝 Ortak yatırım. Yarı devlet yarı tüccar.', effects: { hazine: -10, soylu: 10 } }
+    ]
+  },
+  {
+    id: 'hashasin_suikastci', icon: '🗡️', tag: 'GİZEM',
+    title: 'Gölgeden Gelen',
+    desc: 'Gece yatak odanıza giren suikastçi, muhafızlarınız tarafından yakalandı. Üzerinde zehirli bir hançer ve bir isim listesi vardı — listede sizin adınız birinciydi. Suikastçi "Haşhaşîler" adıyla bilinen gizli örgütten geliyordu. Sorgu sırasında tek bir şey söyledi: "Birisi çok para ödedi."',
+    choices: [
+      { text: '🔍 Kim ödedi? Suikastçiyi konuştur.', effects: { ordu: 5, hazine: -5 }, chain: 'suikast_gizli_iz' },
+      { text: '⚔️ Haşhaşîlerin üslerine baskın yap.',
+        probability: 0.55,
+        successEffects: { ordu: 20, halk: 10 }, failEffects: { ordu: -15 },
+        successText: 'Üs bulundu ve yıkıldı. Örgüt dağıtıldı.',
+        failText: 'Üs boşaltılmıştı. İzler soğudu.' },
+      { text: '💰 Haşhaşîlere mesaj gönder. Karşı teklif yap.', effects: { hazine: -20, ordu: 10 } }
+    ]
+  },
+  {
+    id: 'gece_bekci', icon: '🌙', tag: 'YÖNETİM',
+    title: 'Gecenin Kanunu',
+    desc: 'Başkente gece baskınları arttı. Tüccarlar ve soylular gece sokağa çıkmaktan korkuyor. Şehir emniyet şefi "gece bekçisi teşkilatı kurulmalı" diyor. Masraflı ama gerekli görünüyor.',
+    choices: [
+      { text: '🌙 Gece bekçisi teşkilatı kur.', effects: { hazine: -15, halk: 20, soylu: 15 } },
+      { text: '⚔️ Ordu devriyeleri artırsın.', effects: { hazine: -8, ordu: -5, halk: 10 } },
+      { text: '📜 Sokağa çıkma yasağı ilan et.', effects: { halk: -20, soylu: 10 } }
+    ]
+  },
+  {
+    id: 'gurbet_ustasi', icon: '🔨', tag: 'KÜLTÜR',
+    title: 'Uzaktan Gelen Usta',
+    desc: 'İtalya\'dan gelen mimar Leonardo, sarayınızda çalışmak istiyor. Yanında getirdiği planlar — köprüler, kuleler, su kanalları — nefes kesiciydi. "Efendim," dedi, "bu topraklar büyük yapılar hak ediyor." Kilise temkinli bakıyordu: "Bu adam Katolik."',
+    choices: [
+      { text: '🏛️ Ustayı işe al. Yetenek dine bakmaz.', effects: { halk: 10, kilise: -10 }, setFlag: 'gurbet_mimar', chain: 'mimar_eseri' },
+      { text: '✝️ Kilise itiraz ediyor. Kabul etme.', effects: { kilise: 15, halk: -5 } },
+      { text: '💰 İşe al ama gözetim altında tut.', effects: { halk: 5, kilise: -5 } }
+    ]
+  },
+  {
+    id: 'mimar_eseri', icon: '🏛️', tag: 'ZİNCİR',
+    requires: { flag: 'gurbet_mimar' },
+    title: 'Taşa İşlenen İsim',
+    desc: 'Leonardo üç yıl çalıştı ve ortaya inanılmaz bir eser koydu. Şehrin en büyük köprüsü, on yıldır çözülemeyen nehir geçiş sorununu halletmişti. Halk büyülenmiş, tüccarlar sevinçliydi. Ama kilise "bu köprünün üstünde bir haç yok" diye şikâyet etti.',
+    choices: [
+      { text: '✞ Köprüye haç eklet. Kiliseyi memnun et.', effects: { kilise: 15, halk: 10 } },
+      { text: '🏛️ Köprü köprüdür. İşlev önemli.', effects: { halk: 20, kilise: -10 } }
+    ]
+  },
+  {
+    id: 'kitap_cografi', icon: '🗺️', tag: 'KÜLTÜR',
+    title: 'Haritacının Hediyesi',
+    desc: 'Seyyah İbn Batuta\'ya benzer bir gezgin, krallığınıza geldi ve elinde muhteşem bir coğrafya kitabı tutuyordu. Bilinen dünyanın en kapsamlı haritası ve ticareti anlatıyordu. Bu kitabı satın alıp kraliyet kütüphanesine koyabilirdiniz.',
+    choices: [
+      { text: '📚 Kitabı satın al. Bilgi güçtür.', effects: { hazine: -15, halk: 5 }, setFlag: 'cografi_bilgi' },
+      { text: '🤝 Gezgini sarayda misafir et. Bilgisinden faydalan.', effects: { hazine: -8, ordu: 5 } },
+      { text: '😌 İlgi çekici ama gerekli değil.', effects: {} }
+    ]
+  },
+  {
+    id: 'felsefe_tartisma', icon: '🧠', tag: 'KÜLTÜR',
+    title: 'Büyük Tartışma',
+    desc: 'Saray salonunda iki büyük filozofun tartışması için izin istediler. Aristoteles\'i savunan Albertus ile Platon\'u savunan Porphyrios günlerce tartışacaktı. Halk bu tür entelektüel gösterileri seviyordu ama kilise bazı fikirlerin "tehlikeli" olduğunu düşünüyordu.',
+    choices: [
+      { text: '🧠 Tartışmayı destekle. Halka açık olsun.', effects: { halk: 15, kilise: -10, soylu: 5 } },
+      { text: '📜 Sadece soyluların izleyebileceği kapalı salon.', effects: { soylu: 15, halk: -10 } },
+      { text: '🚫 İzin verme. Gereksiz tartışma.', effects: { kilise: 10, halk: -10 } }
+    ]
+  },
+  {
+    id: 'salgin_sir', icon: '🐀', tag: 'FELAKET',
+    title: 'Liman Sıçanları',
+    desc: 'Limana yanaşan bir gemiden sıçanlar şehre yayıldı. Ardından insanlar hastalanmaya başladı. Hekim Brennus endişeli: "Bu Doğu\'dan gelen yeni bir hastalık. Belirtiler tanıdık ama çok hızlı yayılıyor." Henüz panik yoktu — ama olacaktı.',
+    choices: [
+      { text: '🚢 Limanı kapat. Karantina başlat.', effects: { hazine: -20, halk: 15 }, chain: 'veba_karantina' },
+      { text: '🌿 Hekimleri seferber et. Erken müdahale.', effects: { hazine: -15, halk: 10 } },
+      { text: '😌 Henüz büyük tehdit yok. Bekle.', effects: { halk: -20 }, chain: 'veba' }
+    ]
+  },
+  {
+    id: 'kar_firtinasi', icon: '❄️', tag: 'DOĞAL AFET',
+    title: 'Beyaz Ölüm',
+    desc: 'Ocak ayının ortasında başlayan kar fırtınası üç gün sürdü. Kuzey geçitleri kapandı, köyler izole oldu, hayvanlar ahırlarda dondu. En ciddi sorun: Tahıl depoları kuzey köylerindeydi ve başkente ulaşım kesilmişti. Açlık yaklaşıyordu.',
+    choices: [
+      { text: '🏇 Askeri süvari ile erzak ulaştır.', effects: { hazine: -20, halk: 20, ordu: -5 } },
+      { text: '📦 Şehir içi stoklarını rasyonla.', effects: { halk: -10, hazine: -5 } },
+      { text: '🙏 Kiliseye başvur. Manastır depoları açılsın.', effects: { kilise: -10, halk: 15 } }
+    ]
+  },
+  {
+    id: 'eski_kral_ruhu', icon: '👻', tag: 'GİZEM',
+    title: 'Atanın Mirası',
+    desc: 'Saray arşivlerinde önceki hükümdarın gizli mektupları bulundu. İçinde şaşırtıcı bilgiler vardı: Yüzyıl önce komşu krallığa verilen büyük bir borç hâlâ ödenmemişti. Ve bir sır: O dönemde yapılan bir antlaşmada krallığın belirli koşullarda toprak vermeyi kabul ettiği yazıyordu.',
+    choices: [
+      { text: '🤐 Mektupları yak. Bu sır kalmalı.', effects: { soylu: 5 } },
+      { text: '⚖️ Borcu talep et. Tarih hakemdir.', effects: { hazine: 25, soylu: -10 }, chain: 'sinir_muzakere' },
+      { text: '📢 Her şeyi açıkla. Şeffaflık en iyi politika.', effects: { halk: 15, soylu: -15 } }
+    ]
+  },
+  {
+    id: 'saray_mimarisi', icon: '🏯', tag: 'MEGA PROJE',
+    title: 'Yeni Saray',
+    desc: 'Mevcut saray eskimişti. Duvarlardan sular sızıyor, tavanlar çöküyordu. Başmimar önünüze iki seçenek koydu: Onarım mı, yoksa yeni bir saray inşası mı? Yeni saray nesillere kalacak ama masrafı devasa olacaktı.',
+    choices: [
+      { text: '🏯 Yeni saray inşa et. (15 Yıl · Her yıl -3 Hazine)',
+        project: { id: 'yeni_saray_proj', name: 'Büyük Saray', timeLeft: 15, totalDuration: 15,
+          cost: { hazine: -3 },
+          rewardItem: { icon: '🏯', name: 'Büyük Saray', buffKey: 'soylu', buffVal: 4 } }
+      },
+      { text: '🔧 Mevcut sarayı onar. Pratik çözüm.', effects: { hazine: -15, soylu: 10 } },
+      { text: '😌 Saray biraz eski olsun. Önemli değil.', effects: { soylu: -5 } }
+    ]
+  },
+  {
+    id: 'yenilik_tartisma', icon: '⚙️', tag: 'YÖNETİM',
+    title: 'Eski ile Yeni',
+    desc: 'Genç danışmanın teklifi sansasyon yaratmıştı: "Vergi toplama sistemini modernize edelim. Daha az memur, daha çok gelir, daha az yolsuzluk." Yaşlı soylular öfkeyle ayağa kalktı: "Bu sistem yüzyıllardır çalışıyor!" Ama hazinedar sessizce başını sallıyordu — genç danışman haklıydı.',
+    choices: [
+      { text: '⚙️ Reformu uygula. Değişim zorunlu.', effects: { hazine: 25, soylu: -25, halk: 10 }, setFlag: 'vergi_reformu' },
+      { text: '🤝 Kademeli değişim. Herkesi ikna et.', effects: { hazine: 10, soylu: -5 } },
+      { text: '🚪 Değiştirme. Köklü sistem işliyor.', effects: { soylu: 15, hazine: -10 } }
+    ]
+  },
+  {
+    id: 'halk_mahkemesi', icon: '⚖️', tag: 'ADALET',
+    title: 'Adalet Meydanı',
+    desc: 'Bir mahkeme kararı halkı ayağa kaldırdı: Zengin bir tüccar, bir köylünün arazisini "yasadışı yollarla" almıştı. Hakim tüccar lehine karar vermişti — şüpheli koşullarda. Köylü ailesi meydanda ağlarken etrafında binlerce kişi toplandı. Hepsi sizi bekliyordu.',
+    choices: [
+      { text: '⚖️ Kararı boz. Adaleti yeniden tesis et.', effects: { halk: 30, soylu: -20 }, setFlag: 'adil_hukumdar' },
+      { text: '🤐 Yargı bağımsızdır. Karışma.', effects: { soylu: 10, halk: -25 } },
+      { text: '💰 Tüccarla gizlice konuş. Köylüye tazminat ödetip kapat.', effects: { halk: 10, hazine: 10, soylu: 5 } }
+    ]
+  },
+  {
+    id: 'deniz_feneri', icon: '🔦', tag: 'GELİŞME',
+    title: 'Işığın Kulesi',
+    desc: 'Kıyı kenti tüccarları bir deniz feneri talep etti. Son iki yılda kırk gemi kayalıklara çarparak batmıştı. Deniz feneri bu kayıpları önlerdi ve ticaret güvenliği sağlardı. Baş Mimar "altı ayda biter" dedi.',
+    choices: [
+      { text: '🔦 Fener kulesi inşa et.', effects: { hazine: -15, halk: 15 }, setFlag: 'deniz_feneri_var' },
+      { text: '🚢 Tüccarlar kendi parasıyla yapsın.', effects: { hazine: 5, halk: -5 } }
+    ]
+  },
+  {
+    id: 'kadin_hakki', icon: '👩', tag: 'TOPLUM',
+    title: 'Lonca Kapısı',
+    desc: 'Dokuma loncasının en yetenekli ustası bir kadındı. Ama lonca tüzüğü kadınların oy kullanmasını yasaklıyordu. Kadın, sarayın kapısına geldi: "Efendim, elimden gelen her işi yapıyorum ama sesim yok." Soylular "gelenek bozulmasın" dedi. Kilise karışık mesaj verdi.',
+    choices: [
+      { text: '✊ Lonca tüzüğünü değiştir. Yetenek cinsiyete bakmaz.', effects: { halk: 25, soylu: -20, kilise: -10 }, setFlag: 'kadin_hakki' },
+      { text: '📜 Özel bir muafiyet belgesi ver. Sadece bu kadına.', effects: { halk: 10, soylu: -5 } },
+      { text: '🚪 Gelenek bu. Değiştirilmez.', effects: { soylu: 15, halk: -20 } }
+    ]
+  },
+  {
+    id: 'tas_kopru', icon: '🌉', tag: 'GELİŞME',
+    title: 'İki Kıyı Arasında',
+    desc: 'Nehrin iki yakasındaki şehirler büyümüştü. Eski tahta köprü artık trafiği kaldıramıyordu. Yük hayvanları, tüccarlar ve insanlar sabah saatlerinde saatlerce bekliyordu. Mühendis "taş köprü inşa etmeliyiz" dedi. Yatırım büyük ama getirisi de büyük olacaktı.',
+    choices: [
+      { text: '🌉 Taş köprüyü inşa et.', effects: { hazine: -20, halk: 20 }, setFlag: 'tas_kopru' },
+      { text: '🛥️ Feribot hizmeti başlat. Ucuz ve hızlı.', effects: { hazine: -5, halk: 10 } },
+      { text: '⏳ Şimdilik tahta köprü yeterli.', effects: { halk: -5 } }
+    ]
+  },
+  {
+    id: 'baski_makinesi', icon: '📰', tag: 'KÜLTÜR',
+    title: 'Kelimeler Çoğalıyor',
+    desc: 'Almanya\'dan gelen bir tüccar, Gutenberg\'in icat ettiği matbaa makinesini getirdi. "Bu makine her kitabı yüzlerce kez kopyalar" dedi. Kilise dondu: "Bu kontrol edemediğimiz bir güç." Akademisyenler ise heyecanla öne atladı.',
+    choices: [
+      { text: '📰 Matbaayı satın al. Bilgi yayılsın.', effects: { halk: 25, kilise: -30 }, setFlag: 'matbaa_var', chain: 'matbaa_etkisi' },
+      { text: '✝️ Kilise haklı. Bu tehlikeli.', effects: { kilise: 25, halk: -15 } },
+      { text: '🤝 Kilise denetiminde kullan.', effects: { kilise: 5, halk: 10, hazine: -10 } }
+    ]
+  },
+  {
+    id: 'matbaa_etkisi', icon: '📜', tag: 'ZİNCİR',
+    requires: { flag: 'matbaa_var' },
+    title: 'Yayılan Fikirler',
+    desc: 'Matbaa bir yılda binlerce kitap bastı. Halk okumayı öğreniyor, fikirler yayılıyor. Ama ilk çıkan kitaplardan biri şaşırtıcıydı: Kilise yolsuzluklarını anlatan bir bildiri. Piskopos öfkeyle geldi: "Bu makineyi kapatın!"',
+    choices: [
+      { text: '🗣️ Basın özgürlüğü. Matbaa çalışmaya devam.', effects: { halk: 20, kilise: -25 }, setFlag: 'basin_ozgur' },
+      { text: '✂️ Sansür uygula. Bazı şeyler basılamaz.', effects: { kilise: 15, halk: -10 } },
+      { text: '⚖️ Mahkeme yoluyla eleştiriyi sınırla.', effects: { kilise: 5, halk: -5 } }
+    ]
+  },
+  {
+    id: 'borc_affi', icon: '📜', tag: 'EKONOMİ',
+    title: 'Büyük Af',
+    desc: 'Hazinedar Quintus şaşırtıcı bir öneride bulundu: "Küçük çiftçi borçlarını sil. Kısa vadede kayıp ama uzun vadede ekonomi canlanır." Tüccarlar ve soylular itiraz etti: "Bu bizim alacaklarımızı silmek demek!" Ama halk umutla bakıyordu.',
+    choices: [
+      { text: '🤲 Borç affını uygula. Halk nefes alsın.', effects: { halk: 35, hazine: -20, soylu: -20 }, setFlag: 'borc_affi' },
+      { text: '⚖️ Sadece en yoksulların borcunu af.', effects: { halk: 15, hazine: -10, soylu: -5 } },
+      { text: '🚪 Borç borçtur. Ödenecek.', effects: { soylu: 15, halk: -20 } }
+    ]
+  },
+  {
+    id: 'taht_yarisi', icon: '👑', tag: 'ENTRİKA',
+    title: 'Gölgedeki El',
+    desc: 'Gizli bir rapor geldi: İki uzak akraban, kendilerini "gerçek taht varisi" ilan ederek bazı soylu ailelerden destek topluyor. Henüz açık bir isyan yok ama tohumlar atılıyor. Saray içinde bile bazı yüzler şüpheli bakıyor.',
+    choices: [
+      { text: '🔍 Sessizce soruştur. Kanıt topla.', effects: { ordu: 5, hazine: -5 }, setFlag: 'taht_rakibi' },
+      { text: '⚔️ Akrabaları derhal tutuklat.', effects: { ordu: 10, soylu: -25, halk: -10 } },
+      { text: '🤝 Akrabaları saraya davet et. Gözünün önünde tut.', effects: { soylu: 10 } },
+      { text: '😌 Söylenti. Ciddiye alma.', effects: { soylu: -10 } }
+    ]
+  },
+
+]; // OLAY_PAKETI_2 sonu
+
 // Tüm olayları birleştir
-const ALL_EVENTS_COMBINED = [...ALL_EVENTS, ...EXTRA_EVENTS];
+const ALL_EVENTS_COMBINED = [...ALL_EVENTS, ...EXTRA_EVENTS, ...OLAY_PAKETI_2];
 
 
 
@@ -3210,6 +3750,63 @@ function togglePopup(id) {
   const isOpen = document.getElementById(id).classList.contains('open');
   closeAllPopups();
   if (!isOpen) document.getElementById(id).classList.add('open');
+}
+
+
+
+// ============================================================
+// KRALLİK HARİTASI
+// ============================================================
+const TOPRAK_RENKLERI = {
+  guclu:   '#4a7a2a',
+  normal:  '#3a4a1a',
+  zayif:   '#5a2a0a',
+  tehlike: '#6a1a0a',
+};
+
+function toggleHarita() {
+  const panel = document.getElementById('harita-panel');
+  panel.classList.toggle('visible');
+}
+
+function updateHarita() {
+  if (!G.stats) return;
+  const toggle = document.getElementById('harita-toggle');
+  if (toggle) toggle.classList.add('visible');
+
+  const ort = STAT_KEYS.reduce((s,k) => s+G.stats[k], 0) / STAT_KEYS.length;
+
+  // Toprakların renklerini stata göre güncelle
+  const renkler = {
+    'toprak-merkez': G.stats.soylu > 50 ? TOPRAK_RENKLERI.guclu : TOPRAK_RENKLERI.zayif,
+    'toprak-kuzey':  G.stats.ordu  > 50 ? TOPRAK_RENKLERI.normal : TOPRAK_RENKLERI.tehlike,
+    'toprak-guney':  G.stats.halk  > 50 ? TOPRAK_RENKLERI.normal : TOPRAK_RENKLERI.zayif,
+    'toprak-dogu':   G.stats.hazine> 50 ? TOPRAK_RENKLERI.normal : TOPRAK_RENKLERI.zayif,
+    'toprak-bati':   G.stats.kilise> 50 ? TOPRAK_RENKLERI.normal : TOPRAK_RENKLERI.zayif,
+  };
+
+  Object.entries(renkler).forEach(([id, renk]) => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('fill', renk);
+  });
+
+  // Durum metni
+  const durumEl = document.getElementById('harita-durum');
+  if (durumEl) {
+    if (ort >= 65) durumEl.textContent = '✅ Topraklar huzurlu';
+    else if (ort >= 45) durumEl.textContent = '⚠️ Bölgesel gerginlik';
+    else durumEl.textContent = '🔴 Topraklar tehlikede!';
+  }
+}
+
+function onTemaPreview(temaId) {
+  const tema = TEMALAR[temaId];
+  if (!tema) return;
+  // Unvan dropdown'ı güncelle
+  const titleSel = document.getElementById('inp-title');
+  if (titleSel) {
+    titleSel.innerHTML = tema.unvanlar.map(u => `<option value="${u}">${u}</option>`).join('');
+  }
 }
 
 function closeAllPopups() {
